@@ -87,7 +87,36 @@ module StableSpec
     def replay(record)
       klass = Object.const_get(record["class"])
       instance = klass.new
-      instance.public_send(record["method"], *record["args"])
+      method_name = record["method"]
+      args = record["args"]
+      description = "#{klass.name}##{method_name}(#{args.join(', ')})"
+
+      begin
+        actual_result = instance.public_send(method_name, *args)
+        if record.key?("error")
+          puts "FAILED: #{description}"
+          puts "  Expected error: #{record['error']['class']}"
+          puts "  Actual result: #{actual_result.inspect}"
+        elsif actual_result == record["result"]
+          puts "PASSED: #{description}"
+        else
+          puts "FAILED: #{description}"
+          puts "  Expected: #{record['result'].inspect}"
+          puts "  Actual:   #{actual_result.inspect}"
+        end
+      rescue => e
+        if record.key?("error") && e.class.name == record["error"]["class"]
+          puts "PASSED: #{description} (error)"
+        elsif record.key?("error")
+          puts "FAILED: #{description}"
+          puts "  Expected error: #{record['error']['class']}"
+          puts "  Actual error:   #{e.class.name}: #{e.message}"
+        else
+          puts "FAILED: #{description}"
+          puts "  Expected result: #{record['result'].inspect}"
+          puts "  Actual error:    #{e.class.name}: #{e.message}"
+        end
+      end
     end
   end
 end

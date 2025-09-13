@@ -1,5 +1,3 @@
-require "json"
-
 # StableSpec is a library for recording and replaying method calls.
 # This allows for the automatic generation of unit tests based on real
 # application usage.
@@ -21,6 +19,10 @@ require "json"
 #
 #   # Disable capturing
 #   StableSpec.disable!
+#
+#   # To replay a captured call:
+#   record = JSON.parse(File.read('captured_calls.jsonl').lines.first)
+#   StableSpec.replay(record)
 module StableSpec
   class << self
     def enable!
@@ -80,6 +82,12 @@ module StableSpec
         end
       end
       klass.prepend(wrapper_module)
+    end
+
+    def replay(record)
+      klass = Object.const_get(record["class"])
+      instance = klass.new
+      instance.public_send(record["method"], *record["args"])
     end
   end
 end

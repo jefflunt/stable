@@ -1,8 +1,8 @@
-# lib/stable_spec/record.rb
+# lib/stable/spec.rb
 require 'json'
 
-module StableSpec
-  class Record
+module Stable
+  class Spec
     attr_reader :class_name, :method_name, :args, :result, :error, :timestamp
 
     def initialize(class_name:, method_name:, args:, result: nil, error: nil, timestamp: Time.now.iso8601)

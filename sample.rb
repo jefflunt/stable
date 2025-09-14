@@ -1,6 +1,6 @@
 # sample.rb
 
-require_relative 'lib/stable_spec'
+require_relative 'lib/stable'
 require 'json'
 
 # 2. Defines a test class that has a couple of example methods
@@ -22,22 +22,21 @@ end
 # 3. Generates a random number between 100,000-999,999 (inclusive), and
 #    uses that as the test session ID
 session_id = rand(100_000..999_999)
-puts "Starting StableSpec session: #{session_id}"
+puts "Starting Stable session: #{session_id}"
 
 # 5. Stores the results to a temporary file
-file_id = rand(100..999)
-storage_path = "/tmp/stable_spec-#{file_id}.jsonl"
+storage_path = "/tmp/stable-#{session_id}.jsonl"
 puts "Capturing calls to: #{storage_path}"
 
 storage_file = File.open(storage_path, 'w')
-StableSpec.storage = storage_file
+Stable.storage = storage_file
 
 # 4. Enables and captures invocations on each of those instance methods
-StableSpec.capture(Calculator, :add)
-StableSpec.capture(Calculator, :subtract)
-StableSpec.capture(Calculator, :divide)
+Stable.capture(Calculator, :add)
+Stable.capture(Calculator, :subtract)
+Stable.capture(Calculator, :divide)
 
-StableSpec.enable!
+Stable.enable!
 
 puts "\n--- CAPTURING ---"
 calculator = Calculator.new
@@ -50,7 +49,7 @@ rescue ZeroDivisionError => e
   puts "Captured an expected error: #{e.class}"
 end
 
-StableSpec.disable!
+Stable.disable!
 storage_file.close
 puts "--- FINISHED CAPTURING ---\n"
 
@@ -59,6 +58,6 @@ puts "--- FINISHED CAPTURING ---\n"
 puts "\n--- REPLAYING ---"
 File.foreach(storage_path) do |line|
   record = JSON.parse(line)
-  StableSpec.replay(record)
+  Stable.replay(record)
 end
 puts "--- FINISHED REPLAYING ---"

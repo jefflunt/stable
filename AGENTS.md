@@ -9,6 +9,10 @@ This document provides instructions for AI agents operating in this repository.
 - **Lint:** No linter is configured.
 - **Test:**
   - Run sample file: `ruby sample.rb`
+- **Release:**
+  - bump the gem version to the one supplied by the user
+  - re-test the gem
+  - rebuild the gem
 
 ## Code Style Guidelines
 

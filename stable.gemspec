@@ -8,4 +8,5 @@ Gem::Specification.new do |s|
   s.files       = Dir["lib/**/*.rb"]
   s.homepage    = "https://github.com/jefflunt/stable"
   s.license     = "MIT"
+  s.required_ruby_version = ">= 3.4"
 end

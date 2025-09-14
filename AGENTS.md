@@ -4,7 +4,8 @@ This document provides instructions for AI agents operating in this repository.
 
 ## Build, Lint, and Test
 
-- **Build:** This is a Rails application, so there is no explicit build step.
+- **Build:** This is a Ruby gem:
+  - `gem build stable.gemspec`
 - **Lint:** No linter is configured.
 - **Test:**
   - Run sample file: `ruby sample.rb`
@@ -22,8 +23,9 @@ This document provides instructions for AI agents operating in this repository.
   - Suffix methods that return a boolean value with `?`.
 - **Error Handling:**
   - Use methods that raise exceptions (e.g., `save!`, `create!`).
+- **Documentation:** look at `lib/stable.rb` for examples of code-level documentation, and mimick that style
 - **General:**
-  - Follow standard Ruby on Rails conventions.
+  - Follow standard Ruby conventions.
 
 ## Planning
 

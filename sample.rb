@@ -58,6 +58,7 @@ puts "--- FINISHED RECORDING ---\n"
 puts "\n--- VERIFYING ---"
 File.foreach(storage_path) do |line|
   record = JSON.parse(line)
-  Stable.verify(record)
+  batch = Stable.verify(record)
+  puts batch.to_s
 end
 puts "--- FINISHED VERIFYING ---"

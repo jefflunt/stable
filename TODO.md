@@ -7,9 +7,8 @@ T008: add a `Stable.recording` block
 T009: add test suite integration
 - provide helpers for RSpec and/or Minitest
 
-T010: add rake tasks
+T010: add `rake stable:verify` task
 - `rake stable:verify` to run all verifications
-- `rake stable:clear` to delete stored specs
 
 T012: create an interactive `rake stable:update` task
 - should run verification for all specs
@@ -17,3 +16,7 @@ T012: create an interactive `rake stable:update` task
 
 T013: implement persistence for spec updates
 - after an interactive update session, rewrite the storage file with the changes
+
+T015: add `rake stable:clear` task
+- `rake stable:clear` to delete stored specs
+- should require the user to type `DELETE` to confirm

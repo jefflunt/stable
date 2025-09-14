@@ -24,7 +24,24 @@ module Stable
       @storage || raise("Stable.storage must be set to an IO-like object")
     end
 
-    def record(klass, method_name)
+    # this method is a block-based way to enable and disable recording of
+    # specs. It ensures that recording is turned on for the duration of the
+    # block and is automatically turned off afterward, even if an error occurs.
+    #
+    # example:
+    #
+    #   Stable.recording do
+    #     # code in here will be recorded
+    #   end
+    #
+    def recording
+      enable!
+      yield if block_given?
+    ensure
+      disable!
+    end
+
+    def watch(klass, method_name)
       original_method = klass.instance_method(method_name)
       wrapper_module = Module.new do
         define_method(method_name) do |*args, &block|

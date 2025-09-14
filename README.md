@@ -15,7 +15,7 @@ require 'stable'
 Stable.storage = File.open('captured_calls.jsonl', 'a')
 
 # wrap a method on a given class
-Stable.record(MyClass, :my_method)
+Stable.watch(MyClass, :my_method)
 
 # enable runtime input/output capture
 Stable.enable!

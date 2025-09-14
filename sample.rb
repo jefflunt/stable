@@ -32,24 +32,23 @@ storage_file = File.open(storage_path, 'w+')
 Stable.storage = storage_file
 
 # 4. Enables and records invocations on each of those instance methods
-Stable.record(Calculator, :add)
-Stable.record(Calculator, :subtract)
-Stable.record(Calculator, :divide)
+Stable.watch(Calculator, :add)
+Stable.watch(Calculator, :subtract)
+Stable.watch(Calculator, :divide)
 
-Stable.enable!
-
-puts "\n--- RECORDING ---"
-calculator = Calculator.new
-calculator.add(5, 3)
-calculator.subtract(10, 4)
-calculator.divide(10, 2)
-begin
-  calculator.divide(5, 0)
-rescue ZeroDivisionError => e
-  puts "Recorded an expected error: #{e.class}"
+Stable.recording do
+  puts "\n--- RECORDING ---"
+  calculator = Calculator.new
+  calculator.add(5, 3)
+  calculator.subtract(10, 4)
+  calculator.divide(10, 2)
+  begin
+    calculator.divide(5, 0)
+  rescue ZeroDivisionError => e
+    puts "Recorded an expected error: #{e.class}"
+  end
 end
 
-Stable.disable!
 storage_file.close
 puts "--- FINISHED RECORDING ---\n"
 

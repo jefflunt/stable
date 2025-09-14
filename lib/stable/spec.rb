@@ -2,6 +2,9 @@
 require 'json'
 
 module Stable
+  # a spec is a recording of a single method call, including the inputs and
+  # outputs. it's a self-contained, serializable representation of a method's
+  # behavior at a specific point in time.
   class Spec
     attr_reader :class_name, :method_name, :args, :result, :error, :timestamp
 

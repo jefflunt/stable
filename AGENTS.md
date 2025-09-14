@@ -23,7 +23,9 @@ This document provides instructions for AI agents operating in this repository.
   - Suffix methods that return a boolean value with `?`.
 - **Error Handling:**
   - Use methods that raise exceptions (e.g., `save!`, `create!`).
-- **Documentation:** look at `lib/stable.rb` for examples of code-level documentation, and mimick that style
+- **Documentation:**
+  - focus the documentation on runnable examples of how to use the class/module at hand
+  - limit the text width of the documentation to 80 colums
 - **General:**
   - Follow standard Ruby conventions.
 

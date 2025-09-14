@@ -15,17 +15,17 @@ require 'stable'
 Stable.storage = File.open('captured_calls.jsonl', 'a')
 
 # wrap a method on a given class
-Stable.capture(MyClass, :my_method)
+Stable.record(MyClass, :my_method)
 
 # enable runtime input/output capture
 Stable.enable!
 
-MyClass.my_metehod  # this will be captures by stable
+MyClass.my_metehod  # this will be recorded by stable
 
 # disable input/output capture
 Stable.disable!
 
-# replay captured calls, which gives you a unit test-list pass/fail
+# verify captured calls, which gives you a unit test-list pass/fail
 record = JSON.parse(File.read('captured_calls.jsonl').lines.first)
-Stable.replay(record)
+Stable.verify(record)
 ```

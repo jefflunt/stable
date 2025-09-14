@@ -1,5 +1,5 @@
 # `stable` is a library for recording and replaying method calls.
-# see README.md for detailed usage instructions.
+# See README.md for detailed usage instructions.
 require_relative 'stable/spec'
 
 module Stable
@@ -24,7 +24,7 @@ module Stable
       @storage || raise("Stable.storage must be set to an IO-like object")
     end
 
-    def capture(klass, method_name)
+    def record(klass, method_name)
       original_method = klass.instance_method(method_name)
       wrapper_module = Module.new do
         define_method(method_name) do |*args, &block|
@@ -61,7 +61,7 @@ module Stable
       klass.prepend(wrapper_module)
     end
 
-    def replay(record_hash)
+    def verify(record_hash)
       spec = Spec.from_jsonl(record_hash.to_json)
       klass = Object.const_get(spec.class_name)
       instance = klass.new

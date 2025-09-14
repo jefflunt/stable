@@ -26,19 +26,19 @@ puts "Starting Stable session: #{session_id}"
 
 # 5. Stores the results to a temporary file
 storage_path = "/tmp/stable-#{session_id}.jsonl"
-puts "Capturing calls to: #{storage_path}"
+puts "Recording calls to: #{storage_path}"
 
 storage_file = File.open(storage_path, 'w')
 Stable.storage = storage_file
 
-# 4. Enables and captures invocations on each of those instance methods
-Stable.capture(Calculator, :add)
-Stable.capture(Calculator, :subtract)
-Stable.capture(Calculator, :divide)
+# 4. Enables and records invocations on each of those instance methods
+Stable.record(Calculator, :add)
+Stable.record(Calculator, :subtract)
+Stable.record(Calculator, :divide)
 
 Stable.enable!
 
-puts "\n--- CAPTURING ---"
+puts "\n--- RECORDING ---"
 calculator = Calculator.new
 calculator.add(5, 3)
 calculator.subtract(10, 4)
@@ -46,18 +46,18 @@ calculator.divide(10, 2)
 begin
   calculator.divide(5, 0)
 rescue ZeroDivisionError => e
-  puts "Captured an expected error: #{e.class}"
+  puts "Recorded an expected error: #{e.class}"
 end
 
 Stable.disable!
 storage_file.close
-puts "--- FINISHED CAPTURING ---\n"
+puts "--- FINISHED RECORDING ---\n"
 
 
-# 6. Replays the JSONL file it just created, printing the output to the console
-puts "\n--- REPLAYING ---"
+# 6. Verifies the JSONL file it just created, printing the output to the console
+puts "\n--- VERIFYING ---"
 File.foreach(storage_path) do |line|
   record = JSON.parse(line)
-  Stable.replay(record)
+  Stable.verify(record)
 end
-puts "--- FINISHED REPLAYING ---"
+puts "--- FINISHED VERIFYING ---"

@@ -1,26 +1,28 @@
-# StableSpec is a library for recording and replaying method calls.
-# This allows for the automatic generation of unit tests based on real
-# application usage.
+# stable_spec is a library for recording and replaying method calls. the idea of
+# this is to reduce the amount of manual unit tests you need to write, while
+# keeping the stability/notification system that unit tests provide.
 #
-# Usage:
+# usage:
 #
 #   require 'stable_spec'
 #
-#   # Configure storage to an IO-like object
+#   # stable_spec uses an IO-like object to write the captured inputs/outputs.
+#   # if you don't set this, the default it to print the interaction records to
+#   # $stdout, so you could also pipe the result to another place.
 #   StableSpec.storage = File.open('captured_calls.jsonl', 'a')
 #
-#   # Wrap a method to capture its calls
+#   # wrap a method on a given class
 #   StableSpec.capture(MyClass, :my_method)
 #
-#   # Enable capturing
+#   # enable runtime input/output capture
 #   StableSpec.enable!
 #
-#   # ... call MyClass#my_method ...
+#   MyClass.my_metehod  # this will be captures by stable_spec
 #
-#   # Disable capturing
+#   # disable input/output capture
 #   StableSpec.disable!
 #
-#   # To replay a captured call:
+#   # replay captured calls, which gives you a unit test-list pass/fail
 #   record = JSON.parse(File.read('captured_calls.jsonl').lines.first)
 #   StableSpec.replay(record)
 module StableSpec

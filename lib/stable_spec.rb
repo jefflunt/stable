@@ -25,6 +25,8 @@
 #   # replay captured calls, which gives you a unit test-list pass/fail
 #   record = JSON.parse(File.read('captured_calls.jsonl').lines.first)
 #   StableSpec.replay(record)
+require_relative 'stable_spec/record'
+
 module StableSpec
   class << self
     def enable!
@@ -54,28 +56,26 @@ module StableSpec
           if StableSpec.enabled?
             begin
               result = original_method.bind(self).call(*args, &block)
-              record = {
-                class: klass.name,
-                method: method_name,
+              record = Record.new(
+                class_name: klass.name,
+                method_name: method_name,
                 args: args,
-                result: result,
-                timestamp: Time.now.iso8601
-              }
-              StableSpec.storage.puts(record.to_json)
+                result: result
+              )
+              StableSpec.storage.puts(record.to_jsonl)
               result
             rescue => e
-              record = {
-                class: klass.name,
-                method: method_name,
+              record = Record.new(
+                class_name: klass.name,
+                method_name: method_name,
                 args: args,
                 error: {
                   class: e.class.name,
                   message: e.message,
                   backtrace: e.backtrace
-                },
-                timestamp: Time.now.iso8601
-              }
-              StableSpec.storage.puts(record.to_json)
+                }
+              )
+              StableSpec.storage.puts(record.to_jsonl)
               raise e
             end
           else
@@ -86,36 +86,35 @@ module StableSpec
       klass.prepend(wrapper_module)
     end
 
-    def replay(record)
-      klass = Object.const_get(record["class"])
+    def replay(record_hash)
+      record = Record.from_jsonl(record_hash.to_json)
+      klass = Object.const_get(record.class_name)
       instance = klass.new
-      method_name = record["method"]
-      args = record["args"]
-      description = "#{klass.name}##{method_name}(#{args.join(', ')})"
+      description = "#{record.class_name}##{record.method_name}(#{record.args.join(', ')})"
 
       begin
-        actual_result = instance.public_send(method_name, *args)
-        if record.key?("error")
+        actual_result = instance.public_send(record.method_name, *record.args)
+        if record.error
           puts "FAILED: #{description}"
-          puts "  Expected error: #{record['error']['class']}"
+          puts "  Expected error: #{record.error['class']}"
           puts "  Actual result: #{actual_result.inspect}"
-        elsif actual_result == record["result"]
+        elsif actual_result == record.result
           puts "PASSED: #{description}"
         else
           puts "FAILED: #{description}"
-          puts "  Expected: #{record['result'].inspect}"
+          puts "  Expected: #{record.result.inspect}"
           puts "  Actual:   #{actual_result.inspect}"
         end
       rescue => e
-        if record.key?("error") && e.class.name == record["error"]["class"]
+        if record.error && e.class.name == record.error["class"]
           puts "PASSED: #{description} (error)"
-        elsif record.key?("error")
+        elsif record.error
           puts "FAILED: #{description}"
-          puts "  Expected error: #{record['error']['class']}"
+          puts "  Expected error: #{record.error['class']}"
           puts "  Actual error:   #{e.class.name}: #{e.message}"
         else
           puts "FAILED: #{description}"
-          puts "  Expected result: #{record['result'].inspect}"
+          puts "  Expected result: #{record.result.inspect}"
           puts "  Actual error:    #{e.class.name}: #{e.message}"
         end
       end

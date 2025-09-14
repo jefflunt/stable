@@ -47,7 +47,9 @@ module Stable
     end
 
     def to_s
-      desc = "#{uuid}/#{signature}"
+      short_uuid = uuid.split('-').last
+      short_sig = signature[0..6]
+      desc = "#{short_uuid}/#{short_sig}"
       call = "#{class_name}##{method_name}(#{args.join(', ')})"
 
       case status

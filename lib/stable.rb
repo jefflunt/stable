@@ -37,7 +37,10 @@ module Stable
                 args: args,
                 result: result
               )
-              Stable.storage.puts(spec.to_jsonl)
+              unless Stable.send(:_spec_exists?, spec.signature)
+                Stable.storage.puts(spec.to_jsonl)
+                Stable.send(:_recorded_specs) << spec
+              end
               result
             rescue => e
               spec = Spec.new(
@@ -50,7 +53,10 @@ module Stable
                   backtrace: e.backtrace
                 }
               )
-              Stable.storage.puts(spec.to_jsonl)
+              unless Stable.send(:_spec_exists?, spec.signature)
+                Stable.storage.puts(spec.to_jsonl)
+                Stable.send(:_recorded_specs) << spec
+              end
               raise e
             end
           else
@@ -63,6 +69,19 @@ module Stable
 
     def verify(record_hash)
       Spec.from_jsonl(record_hash.to_json).run!
+    end
+
+    private
+
+    def _recorded_specs
+      @_recorded_specs ||= begin
+        return [] unless storage.respond_to?(:path) && File.exist?(storage.path)
+        File.foreach(storage.path).map { |line| Spec.from_jsonl(line) }
+      end
+    end
+
+    def _spec_exists?(signature)
+      _recorded_specs.any? { |spec| spec.signature == signature }
     end
   end
 end

@@ -28,7 +28,7 @@ puts "Starting Stable session: #{session_id}"
 storage_path = "/tmp/stable-#{session_id}.jsonl"
 puts "Recording calls to: #{storage_path}"
 
-storage_file = File.open(storage_path, 'w')
+storage_file = File.open(storage_path, 'w+')
 Stable.storage = storage_file
 
 # 4. Enables and records invocations on each of those instance methods

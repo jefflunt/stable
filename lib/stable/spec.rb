@@ -1,14 +1,16 @@
 # lib/stable/spec.rb
 require 'json'
+require 'securerandom'
+require 'digest'
 
 module Stable
   # a spec is a recording of a single method call, including the inputs and
   # outputs. it's a self-contained, serializable representation of a method's
   # behavior at a specific point in time.
   class Spec
-    attr_reader :class_name, :method_name, :args, :result, :error, :timestamp, :actual_result, :actual_error, :status
+    attr_reader :class_name, :method_name, :args, :result, :error, :timestamp, :actual_result, :actual_error, :status, :uuid, :signature
 
-    def initialize(class_name:, method_name:, args:, result: nil, error: nil, timestamp: Time.now.iso8601)
+    def initialize(class_name:, method_name:, args:, result: nil, error: nil, timestamp: Time.now.iso8601, uuid: SecureRandom.uuid)
       @class_name = class_name
       @method_name = method_name
       @args = args
@@ -16,6 +18,8 @@ module Stable
       @error = error
       @timestamp = timestamp
       @status = :pending
+      @uuid = uuid
+      @signature = Digest::SHA256.hexdigest("#{class_name}##{method_name}:#{args.to_json}")
     end
 
     def run!
@@ -43,14 +47,16 @@ module Stable
     end
 
     def to_s
-      description = "#{class_name}##{method_name}(#{args.join(', ')})"
+      desc = "#{uuid}/#{signature}"
+      call = "#{class_name}##{method_name}(#{args.join(', ')})"
+
       case status
       when :passed
-        "PASSED: #{description}"
+        "#{desc} P #{call}"
       when :passed_with_error
-        "PASSED: #{description} (error)"
+        "#{desc} P (error) #{call}"
       when :failed
-        lines = ["FAILED: #{description}"]
+        lines = ["#{desc} F #{call}"]
         if actual_error
           if error
             lines << "  Expected error: #{error['class']}"
@@ -70,7 +76,7 @@ module Stable
         end
         lines.join("\n")
       else
-        "PENDING: #{description}"
+        "#{desc} ? #{call}"
       end
     end
 
@@ -81,7 +87,9 @@ module Stable
         args: args,
         result: result,
         error: error,
-        timestamp: timestamp
+        timestamp: timestamp,
+        uuid: uuid,
+        signature: signature
       }.compact.to_json
     end
 
@@ -93,7 +101,8 @@ module Stable
         args: data['args'],
         result: data['result'],
         error: data['error'],
-        timestamp: data['timestamp']
+        timestamp: data['timestamp'],
+        uuid: data['uuid']
       )
     end
   end

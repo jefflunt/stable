@@ -11,11 +11,6 @@ T010: add rake tasks
 - `rake stable:verify` to run all verifications
 - `rake stable:clear` to delete stored specs
 
-T011: implement a dual-ID system for specs
-- add a `signature` field to `Stable::Spec` (a hash of class, method, and args) for deduplication
-- add a `uuid` field to `Stable::Spec` (a random, stable ID) to track lineage over time
-- ensure `record` logic prevents creating specs with duplicate signatures
-
 T012: create an interactive `rake stable:update` task
 - should run verification for all specs
 - for failures, it should prompt the user to update the spec

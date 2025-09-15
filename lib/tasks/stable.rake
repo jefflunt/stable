@@ -25,8 +25,6 @@ namespace :stable do
 
   desc "verify specs"
   task :verify, [:filter] do |t, args|
-    require_relative '../../lib/example/calculator'
-
     puts "#{'uuid        / sig'.ljust(20)} #{'name'.ljust(20)} st call"
     puts "#{'-' * 20} #{'-' * 20} -- #{'-' * 35}"
 

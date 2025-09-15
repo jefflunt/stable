@@ -18,3 +18,8 @@ T015: add `rake stable:clear` task
 T016: remove timestamp from spec
 - remove `timestamp` field from `Stable::Spec`
 - remove `timestamp` from `to_jsonl` output
+
+T018: consolidate test status output
+| status should be a two-character code
+| first char: P/F/? (pass/fail/pending)
+| second char: E (red) for error, N (green) for no error

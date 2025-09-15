@@ -51,14 +51,14 @@ module Stable
       short_sig = signature[0..6]
       desc = "#{short_uuid}/#{short_sig}"
       call = "#{class_name}##{method_name}(#{args.join(', ')})"
+      status_code = _status_code
+      error_code = _error_code
 
       case status
-      when :passed
-        "#{desc} #{_green('P')} #{call}"
-      when :passed_with_error
-        "#{desc} #{_green('P')} (error) #{call}"
+      when :passed, :passed_with_error
+        "#{desc} #{status_code}#{error_code} #{call}"
       when :failed
-        lines = ["#{desc} #{_red('F')} #{call}"]
+        lines = ["#{desc} #{status_code}#{error_code} #{call}"]
         if actual_error
           if error
             lines << "  Expected error: #{error['class']}"
@@ -78,7 +78,7 @@ module Stable
         end
         lines.join("\n")
       else
-        "#{desc} #{_yellow('?')} #{call}"
+        "#{desc} #{status_code}#{error_code} #{call}"
       end
     end
 
@@ -118,6 +118,25 @@ module Stable
 
     def _yellow(text)
       "\e[33m#{text}\e[0m"
+    end
+
+    def _status_code
+      case status
+      when :passed, :passed_with_error
+        _green('P')
+      when :failed
+        _red('F')
+      else
+        _yellow('?')
+      end
+    end
+
+    def _error_code
+      if error || actual_error
+        _red('E')
+      else
+        _green('N')
+      end
     end
   end
 end

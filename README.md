@@ -1,3 +1,5 @@
+<p align="center"><img src="logo.png" width="200"></p>
+
 # stable
 
 `stable` is a library for recording and replaying method calls to prevent

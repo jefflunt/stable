@@ -43,4 +43,23 @@ namespace :stable do
       end
     end
   end
+
+  desc "delete all stable spec files"
+  task :clear do
+    spec_files = Dir.glob('**/stable-*.jsonl') + Dir.glob('spec/stable/**/*.jsonl') + Dir.glob('test/stable/**/*.jsonl')
+    if spec_files.empty?
+      puts "no stable specs found to clear"
+    else
+      puts "found the following spec files:"
+      spec_files.each { |f| puts "- #{f}" }
+      print "are you sure you want to delete them? type 'DELETE SPECS' to confirm: "
+      answer = STDIN.gets.chomp
+      if answer == 'DELETE SPECS'
+        spec_files.each { |f| File.delete(f) }
+        puts "deleted #{spec_files.count} spec file(s)."
+      else
+        puts "aborted."
+      end
+    end
+  end
 end

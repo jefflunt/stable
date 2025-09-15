@@ -1,5 +1,3 @@
-T007: add a `Stable.configure` block
-| should allow setting storage_path and enabled status
 
 T009: add test suite integration
 - provide helpers for RSpec and/or Minitest

@@ -1,4 +1,3 @@
-
 T009: add test suite integration
 - provide helpers for RSpec and/or Minitest
 
@@ -19,3 +18,8 @@ T015: add `rake stable:clear` task
 T016: remove timestamp from spec
 - remove `timestamp` field from `Stable::Spec`
 - remove `timestamp` from `to_jsonl` output
+
+T017: add color-coded output
+| use ANSI color codes to color the output of `Stable::Spec#to_s`
+| green for pass ('P'), red for fail ('F'), yellow for pending ('?')
+| only the status abbreviation should be colored

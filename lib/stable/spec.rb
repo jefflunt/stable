@@ -54,11 +54,11 @@ module Stable
 
       case status
       when :passed
-        "#{desc} P #{call}"
+        "#{desc} #{_green('P')} #{call}"
       when :passed_with_error
-        "#{desc} P (error) #{call}"
+        "#{desc} #{_green('P')} (error) #{call}"
       when :failed
-        lines = ["#{desc} F #{call}"]
+        lines = ["#{desc} #{_red('F')} #{call}"]
         if actual_error
           if error
             lines << "  Expected error: #{error['class']}"
@@ -78,7 +78,7 @@ module Stable
         end
         lines.join("\n")
       else
-        "#{desc} ? #{call}"
+        "#{desc} #{_yellow('?')} #{call}"
       end
     end
 
@@ -106,6 +106,18 @@ module Stable
         timestamp: data['timestamp'],
         uuid: data['uuid']
       )
+    end
+
+    def _green(text)
+      "\e[32m#{text}\e[0m"
+    end
+
+    def _red(text)
+      "\e[31m#{text}\e[0m"
+    end
+
+    def _yellow(text)
+      "\e[33m#{text}\e[0m"
     end
   end
 end

@@ -3,6 +3,10 @@
 require_relative 'stable/spec'
 require_relative 'stable/configuration'
 
+if defined?(Rake)
+  load File.expand_path('../tasks/stable.rake', __FILE__)
+end
+
 module Stable
   class << self
     def configuration

@@ -5,8 +5,9 @@ T010: add `rake stable:verify` task
 | add `rake` as a runtime dependency
 | `rake stable:verify` should run all verifications found in the configured spec paths
 | support running a single spec by UUID: `rake stable:verify[uuid]`
-- support running a subset of specs by fuzzy class name: `rake stable:verify[search_term]`
-- support running a subset of specs by fuzzy name: `rake stable:verify[search_term]`
+| support running a subset of specs by fuzzy class name: `rake stable:verify[search_term]`
+| support running a subset of specs by fuzzy name: `rake stable:verify[search_term]`
+- in `Stable::Spec#run`, handle the case where `Object.const_get` throws an error, and set the `status` to `failed` and `error_code` to "E"
 
 T012: create an interactive `rake stable:update` task
 - should run verification for all specs

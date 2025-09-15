@@ -23,19 +23,20 @@ namespace :stable do
 
   desc "verify specs"
   task :verify, [:filter] do |t, args|
-
     spec_files = Dir.glob('**/stable-*.jsonl') + Dir.glob('spec/stable/**/*.jsonl') + Dir.glob('test/stable/**/*.jsonl')
     if spec_files.empty?
       puts "no stable specs found"
     else
       puts "#{'uuid        / sig'.ljust(20)} #{'name'.ljust(20)} st call"
       puts "#{'-' * 20} #{'-' * 20} -- #{'-' * 35}"
+
       specs = spec_files.flat_map do |file|
         File.foreach(file).map { |line| Stable::Spec.from_jsonl(line) }
       end
 
       specs.each do |spec|
-        if args[:filter].nil? || spec.uuid.include?(args[:filter])
+        filter = args[:filter].downcase
+        if filter.nil? || spec.uuid.downcase.include?(filter) || spec.class_name.downcase.include?(filter) || spec.name.downcase.include?(filter)
           spec.run!
           puts spec.to_s
         end

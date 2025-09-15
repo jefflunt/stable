@@ -11,7 +11,6 @@ namespace :stable do
       config.storage_path = spec_path
     end
 
-    puts "\n--- VERIFYING ---"
     puts "#{'uuid        / sig'.ljust(20)} #{'name'.ljust(20)} st call"
     puts "#{'-' * 20} #{'-' * 20} -- #{'-' * 35}"
 
@@ -20,24 +19,26 @@ namespace :stable do
       batch = Stable.verify(record)
       puts batch.to_s
     end
-    puts "--- FINISHED VERIFYING ---"
   end
 
   desc "verify specs"
   task :verify, [:filter] do |t, args|
-    puts "#{'uuid        / sig'.ljust(20)} #{'name'.ljust(20)} st call"
-    puts "#{'-' * 20} #{'-' * 20} -- #{'-' * 35}"
 
-    # This will need to be updated when T019 is implemented
-    spec_path = Stable.configuration.storage_path || raise("Stable.configuration.storage_path must be set")
+    spec_files = Dir.glob('**/stable-*.jsonl') + Dir.glob('spec/stable/**/*.jsonl') + Dir.glob('test/stable/**/*.jsonl')
+    if spec_files.empty?
+      puts "no stable specs found"
+    else
+      puts "#{'uuid        / sig'.ljust(20)} #{'name'.ljust(20)} st call"
+      puts "#{'-' * 20} #{'-' * 20} -- #{'-' * 35}"
+      specs = spec_files.flat_map do |file|
+        File.foreach(file).map { |line| Stable::Spec.from_jsonl(line) }
+      end
 
-    File.foreach(spec_path) do |line|
-      record = JSON.parse(line)
-      spec = Stable::Spec.from_jsonl(line)
-
-      if args[:filter].nil? || spec.uuid.include?(args[:filter])
-        batch = Stable.verify(record)
-        puts batch.to_s
+      specs.each do |spec|
+        if args[:filter].nil? || spec.uuid.include?(args[:filter])
+          spec.run!
+          puts spec.to_s
+        end
       end
     end
   end

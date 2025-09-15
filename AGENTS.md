@@ -8,7 +8,7 @@ This document provides instructions for AI agents operating in this repository.
   - `gem build stable.gemspec`
 - **Lint:** No linter is configured.
 - **Test:**
-  - Run sample file: `ruby sample.rb`
+  - Run example rake task file: `rake stable:example`
 - **Release:**
   - bump the gem version to the one supplied by the user
   - re-test the gem
@@ -25,6 +25,7 @@ This document provides instructions for AI agents operating in this repository.
   - Prefix private/protected helper methods with `_`.
   - Suffix methods that modify the object in place or raise exceptions with `!`.
   - Suffix methods that return a boolean value with `?`.
+  - rake task descriptions should be all lower case text, except where referring to a constant or proper noun
 - **Error Handling:**
   - Use methods that raise exceptions (e.g., `save!`, `create!`).
 - **Documentation:**

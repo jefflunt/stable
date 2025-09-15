@@ -2,7 +2,7 @@ T009: add test suite integration
 - provide helpers for RSpec and/or Minitest
 
 T010: add `rake stable:verify` task
-- add `rake` as a runtime dependency
+| add `rake` as a runtime dependency
 - `rake stable:verify` should run all verifications found in the configured spec paths
 - support running a single spec by UUID: `rake stable:verify[uuid]`
 - support running a subset of specs by fuzzy class name: `rake stable:verify[search_term]`

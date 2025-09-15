@@ -24,5 +24,5 @@ T019: Establish spec file location standards
 - all rake tasks must scan and operate on all found spec files
 
 T020: add `name` attribute to `Stable::Spec`
-- add a `name` attribute to `Stable::Spec`
-- the `name` should be optional and user-defined
+| add a `name` attribute to `Stable::Spec`
+| the `name` should be optional and user-defined

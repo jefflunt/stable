@@ -8,9 +8,9 @@ module Stable
   # outputs. it's a self-contained, serializable representation of a method's
   # behavior at a specific point in time.
   class Spec
-    attr_reader :class_name, :method_name, :args, :result, :error, :actual_result, :actual_error, :status, :uuid, :signature
+    attr_reader :class_name, :method_name, :args, :result, :error, :actual_result, :actual_error, :status, :uuid, :signature, :name
 
-    def initialize(class_name:, method_name:, args:, result: nil, error: nil, uuid: SecureRandom.uuid)
+    def initialize(class_name:, method_name:, args:, result: nil, error: nil, uuid: SecureRandom.uuid, name: nil)
       @class_name = class_name
       @method_name = method_name
       @args = args
@@ -19,6 +19,7 @@ module Stable
       @status = :pending
       @uuid = uuid
       @signature = Digest::SHA256.hexdigest("#{class_name}##{method_name}:#{args.to_json}")
+      @name = name || SecureRandom.hex(8)
     end
 
     def run!
@@ -49,15 +50,16 @@ module Stable
       short_uuid = uuid.split('-').last
       short_sig = signature[0..6]
       desc = "#{short_uuid}/#{short_sig}"
+      name_str = name[..19].ljust(20)
       call = "#{class_name}##{method_name}(#{args.join(', ')})"
       status_code = _status_code
       error_code = _error_code
 
       case status
       when :passed, :passed_with_error
-        "#{desc} #{status_code}#{error_code} #{call}"
+        "#{desc} #{name_str} #{status_code}#{error_code} #{call}"
       when :failed
-        lines = ["#{desc} #{status_code}#{error_code} #{call}"]
+        lines = ["#{desc} #{name_str} #{status_code}#{error_code} #{call}"]
         if actual_error
           if error
             lines << "  Expected error: #{error['class']}"
@@ -77,7 +79,7 @@ module Stable
         end
         lines.join("\n")
       else
-        "#{desc} #{status_code}#{error_code} #{call}"
+        "#{desc} #{name_str} #{status_code}#{error_code} #{call}"
       end
     end
 
@@ -89,7 +91,8 @@ module Stable
         result: result,
         error: error,
         uuid: uuid,
-        signature: signature
+        signature: signature,
+        name: name
       }.compact.to_json
     end
 
@@ -101,7 +104,8 @@ module Stable
         args: data['args'],
         result: data['result'],
         error: data['error'],
-        uuid: data['uuid']
+        uuid: data['uuid'],
+        name: data['name']
       )
     end
 

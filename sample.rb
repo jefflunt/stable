@@ -54,6 +54,8 @@ puts "--- FINISHED RECORDING ---\n"
 
 # 6. Verifies the JSONL file it just created, printing the output to the console
 puts "\n--- VERIFYING ---"
+puts "#{'uuid        / sig'.ljust(20)} #{'name'.ljust(20)} st call"
+puts "#{'-' * 20} #{'-' * 20} -- #{'-' * 35}"
 File.foreach(Stable.configuration.storage_path) do |line|
   record = JSON.parse(line)
   batch = Stable.verify(record)

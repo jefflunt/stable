@@ -120,6 +120,10 @@ module Stable
       "\e[33m#{text}\e[0m"
     end
 
+    def _light_blue(text)
+      "\e[94m#{text}\e[0m"
+    end
+
     def _status_code
       case status
       when :passed, :passed_with_error
@@ -133,7 +137,7 @@ module Stable
 
     def _error_code
       if error || actual_error
-        _red('E')
+        _light_blue('E')
       else
         _green('N')
       end

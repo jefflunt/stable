@@ -36,7 +36,7 @@ namespace :stable do
 
       filter = args[:filter].to_s.strip.downcase
       specs.each do |spec|
-        if filter.empty? || spec.uuid.include?(filter) || spec.class_name.downcase.include?(filter.downcase) || spec.name.downcase.include?(filter.downcase)
+        if filter.empty? || spec.uuid.include?(filter) || spec.class_name.downcase.include?(filter) || spec.name.downcase.include?(filter)
           spec.run!
           puts spec.to_s
         end

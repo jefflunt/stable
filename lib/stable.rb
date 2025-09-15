@@ -1,9 +1,18 @@
 # `stable` is a library for recording and replaying method calls.
 # See README.md for detailed usage instructions.
 require_relative 'stable/spec'
+require_relative 'stable/configuration'
 
 module Stable
   class << self
+    def configuration
+      @configuration ||= Configuration.new
+    end
+
+    def configure
+      yield(configuration)
+    end
+
     def enable!
       Thread.current[:stable_enabled] = true
     end
@@ -13,7 +22,7 @@ module Stable
     end
 
     def enabled?
-      Thread.current[:stable_enabled] || false
+      Thread.current[:stable_enabled] || configuration.enabled || false
     end
 
     def storage=(io)
@@ -21,7 +30,7 @@ module Stable
     end
 
     def storage
-      @storage || raise("Stable.storage must be set to an IO-like object")
+      @storage ||= (configuration.storage_path && File.open(configuration.storage_path, 'a+')) || raise("Stable.storage must be set to an IO-like object")
     end
 
     # this method is a block-based way to enable and disable recording of
@@ -39,6 +48,8 @@ module Stable
       yield if block_given?
     ensure
       disable!
+      storage.close if storage.respond_to?(:close)
+      @storage = nil
     end
 
     def watch(klass, method_name)
@@ -56,6 +67,7 @@ module Stable
               )
               unless Stable.send(:_spec_exists?, spec.signature)
                 Stable.storage.puts(spec.to_jsonl)
+                Stable.storage.flush
                 Stable.send(:_recorded_specs) << spec
               end
               result
@@ -72,6 +84,7 @@ module Stable
               )
               unless Stable.send(:_spec_exists?, spec.signature)
                 Stable.storage.puts(spec.to_jsonl)
+                Stable.storage.flush
                 Stable.send(:_recorded_specs) << spec
               end
               raise e
@@ -93,7 +106,10 @@ module Stable
     def _recorded_specs
       @_recorded_specs ||= begin
         return [] unless storage.respond_to?(:path) && File.exist?(storage.path)
-        File.foreach(storage.path).map { |line| Spec.from_jsonl(line) }
+        storage.rewind
+        specs = storage.each_line.map { |line| Spec.from_jsonl(line) }
+        storage.seek(0, IO::SEEK_END)
+        specs
       end
     end
 

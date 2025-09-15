@@ -26,10 +26,10 @@ puts "Starting Stable session: #{session_id}"
 
 # 5. Stores the results to a temporary file
 storage_path = "/tmp/stable-#{session_id}.jsonl"
+Stable.configure do |config|
+  config.storage_path = storage_path
+end
 puts "Recording calls to: #{storage_path}"
-
-storage_file = File.open(storage_path, 'w+')
-Stable.storage = storage_file
 
 # 4. Enables and records invocations on each of those instance methods
 Stable.watch(Calculator, :add)
@@ -49,13 +49,12 @@ Stable.recording do
   end
 end
 
-storage_file.close
 puts "--- FINISHED RECORDING ---\n"
 
 
 # 6. Verifies the JSONL file it just created, printing the output to the console
 puts "\n--- VERIFYING ---"
-File.foreach(storage_path) do |line|
+File.foreach(Stable.configuration.storage_path) do |line|
   record = JSON.parse(line)
   batch = Stable.verify(record)
   puts batch.to_s

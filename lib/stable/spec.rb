@@ -8,15 +8,14 @@ module Stable
   # outputs. it's a self-contained, serializable representation of a method's
   # behavior at a specific point in time.
   class Spec
-    attr_reader :class_name, :method_name, :args, :result, :error, :timestamp, :actual_result, :actual_error, :status, :uuid, :signature
+    attr_reader :class_name, :method_name, :args, :result, :error, :actual_result, :actual_error, :status, :uuid, :signature
 
-    def initialize(class_name:, method_name:, args:, result: nil, error: nil, timestamp: Time.now.iso8601, uuid: SecureRandom.uuid)
+    def initialize(class_name:, method_name:, args:, result: nil, error: nil, uuid: SecureRandom.uuid)
       @class_name = class_name
       @method_name = method_name
       @args = args
       @result = result
       @error = error
-      @timestamp = timestamp
       @status = :pending
       @uuid = uuid
       @signature = Digest::SHA256.hexdigest("#{class_name}##{method_name}:#{args.to_json}")
@@ -89,7 +88,6 @@ module Stable
         args: args,
         result: result,
         error: error,
-        timestamp: timestamp,
         uuid: uuid,
         signature: signature
       }.compact.to_json
@@ -103,7 +101,6 @@ module Stable
         args: data['args'],
         result: data['result'],
         error: data['error'],
-        timestamp: data['timestamp'],
         uuid: data['uuid']
       )
     end

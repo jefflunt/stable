@@ -92,3 +92,33 @@ F ✗  6a8fb9  Calculator#add (expected 8, got 2)
 ```
 
 This tells you exactly which interactions have regressed.
+
+## Deep Dive: The Spec File
+
+Each line in a `.jsonl` file represents a single recorded interaction, parsed
+into a `Stable::Spec` object. Understanding the attributes of this object can
+be helpful for debugging or manually inspecting your specs.
+
+Here is a breakdown of each attribute in the JSON record:
+
+- **`class`**: The name of the class containing the watched method.
+- **`method`**: The name of the method that was called.
+- **`args`**: An array of the arguments that were passed to the method during
+  the recording.
+- **`result`**: The value returned by the method. This key is omitted if an
+  error was raised.
+- **`error`**: An object containing details about an exception that was raised
+  during the method call. It includes the `class`, `message`, and `backtrace`.
+  This key is omitted if no error occurred.
+- **`uuid`**: A universally unique identifier (UUID) for the spec. This ID is
+  generated once and remains with the spec for its entire lifetime. It allows
+  `stable` to track the history of a specific interaction, even if its inputs
+  or outputs change over time.
+- **`signature`**: A SHA256 hash of the spec's `class`, `method`, and `args`.
+  `stable` uses this signature to deduplicate specs and avoid recording the
+  exact same interaction multiple times.
+- **`name`**: A short, human-readable identifier derived from the `uuid`. This
+  is the ID you see in the output of the `rake stable:verify` task. It provides
+  a convenient way to reference a specific spec. You can also assign your own
+  name to a spec to make it even easier to identify.
+

@@ -22,6 +22,12 @@ module Stable
       @name = name || SecureRandom.hex(8)
     end
 
+    def name=(new_name)
+      return if new_name.to_s.strip.empty?
+      @name = new_name
+    end
+
+
     def run!
       begin
         klass = Object.const_get(class_name)

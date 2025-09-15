@@ -34,9 +34,9 @@ namespace :stable do
         File.foreach(file).map { |line| Stable::Spec.from_jsonl(line) }
       end
 
+      filter = args[:filter].to_s.strip.downcase
       specs.each do |spec|
-        filter = args[:filter].downcase
-        if filter.nil? || spec.uuid.downcase.include?(filter) || spec.class_name.downcase.include?(filter) || spec.name.downcase.include?(filter)
+        if filter.empty? || spec.uuid.include?(filter) || spec.class_name.downcase.include?(filter.downcase) || spec.name.downcase.include?(filter.downcase)
           spec.run!
           puts spec.to_s
         end

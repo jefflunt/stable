@@ -23,10 +23,9 @@ module Stable
     end
 
     def run!
-      klass = Object.const_get(class_name)
-      instance = klass.new
-
       begin
+        klass = Object.const_get(class_name)
+        instance = klass.new
         @actual_result = instance.public_send(method_name, *args)
         if error
           @status = :failed

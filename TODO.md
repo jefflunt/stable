@@ -2,6 +2,7 @@ T009: add test suite integration
 - provide helpers for RSpec and/or Minitest
 
 T010: add `rake stable:verify` task
+- add `rake` as a runtime dependency
 - `rake stable:verify` should run all verifications found in the configured spec paths
 - support running a single spec by UUID: `rake stable:verify[uuid]`
 - support running a subset of specs by fuzzy class name: `rake stable:verify[search_term]`
@@ -22,7 +23,3 @@ T019: Establish spec file location standards
 - add `config.spec_paths` to `Stable.configure` to support glob patterns
 - establish a sensible default path (e.g., `spec/stable/**/*.jsonl`)
 - all rake tasks must scan and operate on all found spec files
-
-T020: add `name` attribute to `Stable::Spec`
-| add a `name` attribute to `Stable::Spec`
-| the `name` should be optional and user-defined

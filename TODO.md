@@ -23,3 +23,9 @@ T019: Establish spec file location standards
 - add `config.spec_paths` to `Stable.configure` to support glob patterns
 - establish a sensible default path (e.g., `spec/stable/**/*.jsonl`)
 - all rake tasks must scan and operate on all found spec files
+
+T021: Extract verification formatting to `Stable::VerboseFormatter`
+- Create `Stable::VerboseFormatter` class
+- Move `to_s` logic from `Stable::Spec` to the formatter
+- Formatter should accept a spec object in its initializer
+- Formatter's `to_s` method should produce the current output

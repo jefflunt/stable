@@ -77,8 +77,10 @@ If the behavior of `Calculator#add` has not changed, the output will look
 like this:
 
 ```
-P ✓  8f8e19  Calculator#add
-P ✓  6a8fb9  Calculator#add
+uuid        / sig    name                 st call
+-------------------- -------------------- -- -----------------------------------
+d171f8670b44/9a1ebf5 adds two numbers      P N Calculator#add(5, 3)
+e109cff2711a/eb9b4f4 subtracts two number  P N Calculator#subtract(10, 4)
 
 2 facts, 2 passing, 0 pending, 0 failing
 ```
@@ -87,8 +89,14 @@ If we introduce a bug into `Calculator#add` (e.g., `a - b` instead of `a + b`),
 the verification will fail:
 
 ```
-F ✗  8f8e19  Calculator#add (expected 4, got 0)
-F ✗  6a8fb9  Calculator#add (expected 8, got 2)
+uuid        / sig    name                 st call
+-------------------- -------------------- -- -----------------------------------
+d171f8670b44/9a1ebf5 adds two numbers      F N Calculator#add(5, 3)
+  Expected: 8
+  Actual:   2
+e109cff2711a/eb9b4f4 subtracts two number  F N Calculator#subtract(10, 4)
+  Expected: 6
+  Actual:   14
 
 2 facts, 0 passing, 0 pending, 2 failing
 ```

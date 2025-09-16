@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# check if a version number is provided
+if [ -z "$1" ]; then
+  echo "Usage: ./release <version>"
+  exit 1
+fi
+
+VERSION=$1
+VERSION_FILE="lib/stable/version.rb"
+
+# update the version file
+echo "updating version to $VERSION in $VERSION_FILE"
+sed -i.bak "s/VERSION = \".*\"/VERSION = \"$VERSION\"/" $VERSION_FILE
+rm ${VERSION_FILE}.bak
+
+# verify the example task
+echo "running verification task..."
+rake stable:example
+
+# check the exit status of the verification task
+if [ $? -eq 0 ]; then
+  echo "verification successful. building gem..."
+  # Build the gem
+  gem build stable.gemspec
+else
+  echo "verification failed. Aborting release."
+  # optional: revert the version change
+  git checkout -- $VERSION_FILE
+  exit 1
+fi
+
+echo "release script finished."

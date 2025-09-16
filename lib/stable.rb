@@ -1,6 +1,6 @@
 # `stable` is a library for recording and replaying method calls.
 # See README.md for detailed usage instructions.
-require_relative 'stable/spec'
+require_relative 'stable/fact'
 require_relative 'stable/configuration'
 
 if defined?(Rake)
@@ -38,7 +38,7 @@ module Stable
     end
 
     # this method is a block-based way to enable and disable recording of
-    # specs. It ensures that recording is turned on for the duration of the
+    # facts. It ensures that recording is turned on for the duration of the
     # block and is automatically turned off afterward, even if an error occurs.
     #
     # example:
@@ -63,20 +63,20 @@ module Stable
           if Stable.enabled?
             begin
               result = original_method.bind(self).call(*args, &block)
-              spec = Spec.new(
+              fact = Fact.new(
                 class_name: klass.name,
                 method_name: method_name,
                 args: args,
                 result: result
               )
-              unless Stable.send(:_spec_exists?, spec.signature)
-                Stable.storage.puts(spec.to_jsonl)
+              unless Stable.send(:_fact_exists?, fact.signature)
+                Stable.storage.puts(fact.to_jsonl)
                 Stable.storage.flush
-                Stable.send(:_recorded_specs) << spec
+                Stable.send(:_recorded_facts) << fact
               end
               result
             rescue => e
-              spec = Spec.new(
+              fact = Fact.new(
                 class_name: klass.name,
                 method_name: method_name,
                 args: args,
@@ -86,10 +86,10 @@ module Stable
                   backtrace: e.backtrace
                 }
               )
-              unless Stable.send(:_spec_exists?, spec.signature)
-                Stable.storage.puts(spec.to_jsonl)
+              unless Stable.send(:_fact_exists?, fact.signature)
+                Stable.storage.puts(fact.to_jsonl)
                 Stable.storage.flush
-                Stable.send(:_recorded_specs) << spec
+                Stable.send(:_recorded_facts) << fact
               end
               raise e
             end
@@ -102,23 +102,23 @@ module Stable
     end
 
     def verify(record_hash)
-      Spec.from_jsonl(record_hash.to_json).run!
+      Fact.from_jsonl(record_hash.to_json).run!
     end
 
     private
 
-    def _recorded_specs
-      @_recorded_specs ||= begin
+    def _recorded_facts
+      @_recorded_facts ||= begin
         return [] unless storage.respond_to?(:path) && File.exist?(storage.path)
         storage.rewind
-        specs = storage.each_line.map { |line| Spec.from_jsonl(line) }
+        facts = storage.each_line.map { |line| Fact.from_jsonl(line) }
         storage.seek(0, IO::SEEK_END)
-        specs
+        facts
       end
     end
 
-    def _spec_exists?(signature)
-      _recorded_specs.any? { |spec| spec.signature == signature }
+    def _fact_exists?(signature)
+      _recorded_facts.any? { |fact| fact.signature == signature }
     end
   end
 end

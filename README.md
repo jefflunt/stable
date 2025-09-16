@@ -12,9 +12,9 @@ provide.
 1.  **Watch:** You tell `stable` to watch a method on a class.
 2.  **Record:** When that method is called within a `Stable.recording` block,
     `stable` records the inputs, output, and any errors.
-3.  **Store:** The recording is saved as a JSON line (`.jsonl`) file, creating a
-    "spec" for that specific interaction.
-4.  **Verify:** You can replay these specs at any time to verify that the
+3.  **Store:** The recording is saved as a `.fact` file, creating a verifiable
+    "fact" about that specific interaction.
+4.  **Verify:** You can replay these facts at any time to verify that the
     method's behavior has not changed.
 
 ## Usage
@@ -30,19 +30,19 @@ class Calculator
 end
 ```
 
-### 1. Recording Specs
+### 1. Recording Facts
 
 To record interactions with the `Calculator#add` method, we first need to
 `watch` it. Then, we can wrap our application code in a `Stable.recording`
-block.
+block. By default, `stable` will save facts to the `facts/` directory.
 
 ```ruby
 require 'stable'
 require_relative 'calculator'
 
-# Configure stable to save specs to a file
+# Configure stable to save facts to a specific file
 Stable.configure do |config|
-  config.storage_path = 'specs.jsonl'
+  config.storage_path = 'facts/calculator.fact'
 end
 
 # Watch the :add method on the Calculator class
@@ -56,17 +56,17 @@ Stable.recording do
 end
 ```
 
-After running this code, `specs.jsonl` will contain:
+After running this code, `facts/calculator.fact` will contain:
 
 ```json
 {"class":"Calculator","method":"add","args":[2,2],"result":4,"uuid":"...","signature":"...","name":"..."}
 {"class":"Calculator","method":"add","args":[5,3],"result":8,"uuid":"...","signature":"...","name":"..."}
 ```
 
-### 2. Verifying Specs
+### 2. Verifying Facts
 
-Once you have recorded specs, you can use the provided Rake task to verify
-them. This will replay the inputs from each spec and compare the new output
+Once you have recorded facts, you can use the provided Rake task to verify
+them. This will replay the inputs from each fact and compare the new output
 with the recorded output.
 
 ```bash
@@ -80,7 +80,7 @@ like this:
 P ✓  8f8e19  Calculator#add
 P ✓  6a8fb9  Calculator#add
 
-2 specs, 2 passing, 0 pending, 0 failing
+2 facts, 2 passing, 0 pending, 0 failing
 ```
 
 If we introduce a bug into `Calculator#add` (e.g., `a - b` instead of `a + b`),
@@ -90,16 +90,16 @@ the verification will fail:
 F ✗  8f8e19  Calculator#add (expected 4, got 0)
 F ✗  6a8fb9  Calculator#add (expected 8, got 2)
 
-2 specs, 0 passing, 0 pending, 2 failing
+2 facts, 0 passing, 0 pending, 2 failing
 ```
 
 This tells you exactly which interactions have regressed.
 
-## Deep Dive: The Spec File
+## Deep Dive: The Fact File
 
-Each line in a `.jsonl` file represents a single recorded interaction, parsed
-into a `Stable::Spec` object. Understanding the attributes of this object can
-be helpful for debugging or manually inspecting your specs.
+Each line in a `.fact` file represents a single recorded interaction, parsed
+into a `Stable::Fact` object. Understanding the attributes of this object can
+be helpful for debugging or manually inspecting your facts.
 
 Here is a breakdown of each attribute in the JSON record:
 
@@ -112,15 +112,15 @@ Here is a breakdown of each attribute in the JSON record:
 - **`error`**: An object containing details about an exception that was raised
   during the method call. It includes the `class`, `message`, and `backtrace`.
   This key is omitted if no error occurred.
-- **`uuid`**: A universally unique identifier (UUID) for the spec. This ID is
-  generated once and remains with the spec for its entire lifetime. It allows
+- **`uuid`**: A universally unique identifier (UUID) for the fact. This ID is
+  generated once and remains with the fact for its entire lifetime. It allows
   `stable` to track the history of a specific interaction, even if its inputs
   or outputs change over time.
-- **`signature`**: A SHA256 hash of the spec's `class`, `method`, and `args`.
-  `stable` uses this signature to deduplicate specs and avoid recording the
+- **`signature`**: A SHA256 hash of the fact's `class`, `method`, and `args`.
+  `stable` uses this signature to deduplicate facts and avoid recording the
   exact same interaction multiple times.
 - **`name`**: A short, human-readable identifier derived from the `uuid`. This
   is the ID you see in the output of the `rake stable:verify` task. It provides
-  a convenient way to reference a specific spec. You can also assign your own
-  name to a spec to make it even easier to identify.
+  a convenient way to reference a specific fact. You can also assign your own
+  name to a fact to make it even easier to identify.
 

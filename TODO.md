@@ -8,13 +8,20 @@ T012: create an interactive `rake stable:update` task
   - if the user rejects the update, then the standard failure is tracked
 - after an interactive update session, rewrite the storage file with the changes
 
-T019: Establish spec file location standards
-- add `config.spec_paths` to `Stable.configure` to support glob patterns
-- establish a sensible default path (e.g., `spec/stable/**/*.jsonl`)
-- all rake tasks must scan and operate on all found spec files
+T019: Refactor from "spec" to "fact" and standardize file locations
+| rename `Stable::Spec` to `Stable::Fact` and `lib/stable/spec.rb` to `lib/stable/fact.rb`
+| rename `config.spec_paths` to `config.fact_paths` and set the default to `['facts/**/*.fact']`
+| create a top-level `facts/` directory for fact files
+| move the example `calculator.jsonl` to `facts/calculator.fact`
+| update all rake tasks to use the new terminology and file discovery logic
+| update the `README.md` to reflect the new "fact" terminology and conventions
 
 T021: Extract verification formatting to `Stable::VerboseFormatter`
 - Create `Stable::VerboseFormatter` class
 - Move `to_s` logic from `Stable::Spec` to the formatter
 - Formatter should accept a spec object in its initializer
 - Formatter's `to_s` method should produce the current output
+
+T022: create an interactive console for exploring specs
+- `rake stable:console` should load all specs into an IRB session
+- the console should provide a `specs` variable containing all loaded specs

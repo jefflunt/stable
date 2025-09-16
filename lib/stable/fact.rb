@@ -1,13 +1,13 @@
-# lib/stable/spec.rb
+# lib/stable/fact.rb
 require 'json'
 require 'securerandom'
 require 'digest'
 
 module Stable
-  # a spec is a recording of a single method call, including the inputs and
+  # a fact is a recording of a single method call, including the inputs and
   # outputs. it's a self-contained, serializable representation of a method's
   # behavior at a specific point in time.
-  class Spec
+  class Fact
     attr_reader :class_name, :method_name, :args, :result, :error, :actual_result, :actual_error, :status, :uuid, :signature, :name
 
     def initialize(class_name:, method_name:, args:, result: nil, error: nil, uuid: SecureRandom.uuid, name: nil)

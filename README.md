@@ -103,6 +103,30 @@ e109cff2711a/eb9b4f4 subtracts two number  F N Calculator#subtract(10, 4)
 
 This tells you exactly which interactions have regressed.
 
+### 3. Updating Facts
+
+When a fact fails, it often means the underlying code has changed. If the new behavior is correct, you can use the `rake stable:update` task to interactively update your recorded facts.
+
+```bash
+$ rake stable:update
+```
+
+This task will run through all your facts. For each one that fails, it will display the difference and prompt you to accept the new result.
+
+```
+uuid        / sig    name                 st call
+-------------------- -------------------- -- -----------------------------------
+d171f8670b44/9a1ebf5 adds two numbers      F N Calculator#add(5, 3)
+  Expected: 8
+  Actual:   2
+  update this fact? (y/n): y
+  updated.
+
+1 fact(s) updated.
+```
+
+If you enter `y`, the `.fact` file will be permanently updated with the new result. If you enter `n` or anything else, the original fact will be kept. This workflow makes it easy to review and approve changes to your system's behavior.
+
 ## Deep Dive: The Fact File
 
 Each line in a `.fact` file represents a single recorded interaction, parsed

@@ -4,9 +4,9 @@ require_relative 'colors'
 module Stable
   module Formatters
     class Verbose
-
       def initialize(facts)
         @facts = facts
+        @start_time = Time.now
       end
 
       def to_s(fact)
@@ -55,7 +55,8 @@ module Stable
         passing = @facts.count { |f| f.status == :passed || f.status == :passed_with_error }
         failing = @facts.count { |f| f.status == :failed }
         pending = @facts.count { |f| f.status == :pending }
-        "\n#{@facts.count} facts, #{passing} passing, #{pending} pending, #{failing} failing"
+        runtime = Time.now - @start_time
+        "\n#{@facts.count} facts, #{passing} passing, #{pending} pending, #{failing} failing, finished in #{runtime.round(2)}s"
       end
 
 

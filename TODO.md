@@ -9,5 +9,5 @@ T012: create an interactive `rake stable:update` task
 - after an interactive update session, rewrite the storage file with the changes
 
 T022: create an interactive console for exploring facts
-- `rake stable:console` should load all facts into an IRB session
-- the console should provide a `facts` variable containing all loaded facts
+| `rake stable:console` should load all facts into an IRB session
+| the console should provide a `facts` variable containing all loaded facts

@@ -70,4 +70,21 @@ namespace :stable do
       end
     end
   end
+
+  desc "start an interactive console with all facts loaded"
+  task :console do
+    require 'irb'
+
+    def facts
+      @facts ||= begin
+        fact_files = Dir.glob(Stable.configuration.fact_paths)
+        fact_files.flat_map do |file|
+          File.foreach(file).map { |line| Stable::Fact.from_jsonl(line) }
+        end
+      end
+    end
+
+    puts "loaded #{facts.count} facts into the `facts` method"
+    binding.irb
+  end
 end

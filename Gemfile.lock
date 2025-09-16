@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stable (1.15.1)
+    stable (1.15.2)
       rake (~> 13.0)
 
 GEM

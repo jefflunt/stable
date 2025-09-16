@@ -1,5 +1,6 @@
 # `stable` is a library for recording and replaying method calls.
 # See README.md for detailed usage instructions.
+require_relative 'stable/version'
 require_relative 'stable/fact'
 require_relative 'stable/configuration'
 

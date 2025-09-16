@@ -1,6 +1,8 @@
+require_relative "lib/stable/version"
+
 Gem::Specification.new do |s|
   s.name        = "stable"
-  s.version     = "1.14.1"
+  s.version     = Stable::VERSION
   s.description = "an automatic unit test system that captures your usage and records it for future playback"
   s.summary     = "an automatic unit test system that captures your usage and records it for future playback"
   s.authors     = ["Jeff Lunt"]

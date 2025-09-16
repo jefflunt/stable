@@ -14,9 +14,9 @@ echo "updating version to $VERSION in $VERSION_FILE"
 sed -i.bak "s/VERSION = \".*\"/VERSION = \"$VERSION\"/" $VERSION_FILE
 rm ${VERSION_FILE}.bak
 
-# verify the example task
-echo "running verification task..."
-rake stable:example
+# update Gemfile.lock and verify the example task
+echo "re-bundling and running verification task..."
+bundle install && rake stable:example
 
 # check the exit status of the verification task
 if [ $? -eq 0 ]; then

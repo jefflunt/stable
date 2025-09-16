@@ -89,7 +89,7 @@ namespace :stable do
   end
 
   desc "interactively update failing facts"
-  task :update do
+  task :update, [:filter] do |t, args|
     fact_files = Dir.glob(Stable.configuration.fact_paths)
     facts = fact_files.flat_map do |file|
       File.foreach(file).map { |line| Stable::Fact.from_jsonl(line, file) }
@@ -104,18 +104,21 @@ namespace :stable do
       puts formatter.header
 
       updated_facts = []
+      filter = args[:filter].to_s.strip.downcase
       facts.each do |fact|
-        fact.run!
-        if fact.status == :failed
-          puts formatter.to_s(fact)
-          print "  update this fact? (y/n): "
-          answer = STDIN.gets
-          if answer && answer.chomp.downcase == 'y'
-            fact.update!
-            updated_facts << fact
-            puts "  updated."
-          else
-            puts "  skipped."
+        if filter.empty? || fact.uuid.include?(filter) || fact.class_name.downcase.include?(filter) || fact.name.downcase.include?(filter)
+          fact.run!
+          if fact.status == :failed
+            puts formatter.to_s(fact)
+            print "  update this fact? (y/n): "
+            answer = STDIN.gets
+            if answer && answer.chomp.downcase == 'y'
+              fact.update!
+              updated_facts << fact
+              puts "  updated."
+            else
+              puts "  skipped."
+            end
           end
         end
       end

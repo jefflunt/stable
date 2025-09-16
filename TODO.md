@@ -9,11 +9,13 @@ T012: create an interactive `rake stable:update` task
 - after an interactive update session, rewrite the storage file with the changes
 
 
-T021: Extract verification formatting to `Stable::VerboseFormatter`
-- Create `Stable::VerboseFormatter` class
-- Move `to_s` logic from `Stable::Spec` to the formatter
-- Formatter should accept a spec object in its initializer
-- Formatter's `to_s` method should produce the current output
+T021: Extract verification formatting to `Stable::Formatters::Verbose`
+| create the `Stable::Formatters::Verbose` class
+| the formatter should manage a collection of facts
+| move the `to_s` logic for a single fact from `Stable::Fact` to the formatter
+| create a `header` method in the formatter to generate the column headers
+| create a `summary` method to generate the final count of passed/failed/pending facts
+| update all rake tasks to use the new formatter for all output
 
 T022: create an interactive console for exploring specs
 - `rake stable:console` should load all specs into an IRB session

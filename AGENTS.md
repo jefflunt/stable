@@ -22,7 +22,7 @@ This document provides instructions for AI agents operating in this repository.
 - **Naming Conventions:**
   - `snake_case` for methods and variables.
   - `CamelCase` for classes and modules.
-  - Prefix private/protected helper methods with `_`.
+  - Prefix private/protected helper methods with `_`, and don't actually use the `private` keyword at all
   - Suffix methods that modify the object in place or raise exceptions with `!`.
   - Suffix methods that return a boolean value with `?`.
   - rake task descriptions should be all lower case text, except where referring to a constant or proper noun

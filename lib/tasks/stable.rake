@@ -1,5 +1,6 @@
 # lib/tasks/stable.rake
 require_relative '../stable'
+require_relative '../stable/formatters/verbose'
 
 namespace :stable do
   desc "run the example verification"
@@ -11,14 +12,18 @@ namespace :stable do
       config.storage_path = fact_path
     end
 
-    puts "#{'uuid        / sig'.ljust(20)} #{'name'.ljust(20)} st call"
-    puts "#{'-' * 20} #{'-' * 20} -- #{'-' * 35}"
-
+    facts = []
     File.foreach(Stable.configuration.storage_path) do |line|
-      record = JSON.parse(line)
-      batch = Stable.verify(record)
-      puts batch.to_s
+      facts << Stable::Fact.from_jsonl(line)
     end
+
+    formatter = Stable::Formatters::Verbose.new(facts)
+    puts formatter.header
+    facts.each do |fact|
+      fact.run!
+      puts formatter.to_s(fact)
+    end
+    puts formatter.summary
   end
 
   desc "verify facts"
@@ -27,20 +32,21 @@ namespace :stable do
     if fact_files.empty?
       puts "no stable facts found"
     else
-      puts "#{'uuid        / sig'.ljust(20)} #{'name'.ljust(20)} st call"
-      puts "#{'-' * 20} #{'-' * 20} -- #{'-' * 35}"
-
       facts = fact_files.flat_map do |file|
         File.foreach(file).map { |line| Stable::Fact.from_jsonl(line) }
       end
+
+      formatter = Stable::Formatters::Verbose.new(facts)
+      puts formatter.header
 
       filter = args[:filter].to_s.strip.downcase
       facts.each do |fact|
         if filter.empty? || fact.uuid.include?(filter) || fact.class_name.downcase.include?(filter) || fact.name.downcase.include?(filter)
           fact.run!
-          puts fact.to_s
+          puts formatter.to_s(fact)
         end
       end
+      puts formatter.summary
     end
   end
 

@@ -29,14 +29,16 @@ namespace :stable do
   desc "verify facts"
   task :verify, [:filter] do |t, args|
     fact_files = Dir.glob(Stable.configuration.fact_paths)
-    if fact_files.empty?
-      puts "no stable facts found"
-    else
-      facts = fact_files.flat_map do |file|
-        File.foreach(file).map { |line| Stable::Fact.from_jsonl(line) }
-      end
+    facts = fact_files.flat_map do |file|
+      File.foreach(file).map { |line| Stable::Fact.from_jsonl(line) }
+    end
 
     formatter = Stable.configuration.formatter.new(facts)
+
+    if facts.empty?
+      puts "no stable facts found"
+      puts formatter.summary
+    else
       puts formatter.header
 
       filter = args[:filter].to_s.strip.downcase

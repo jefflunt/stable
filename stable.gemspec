@@ -11,5 +11,5 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/jefflunt/stable"
   s.license     = "MIT"
   s.required_ruby_version = ">= 3.4"
-  s.add_runtime_dependency "rake"
+  s.add_runtime_dependency "rake", ">= 13.0"
 end

@@ -38,7 +38,8 @@ This document provides instructions for AI agents operating in this repository.
 
 - The `TODO.md` file contains tasks to be completed in this repository
   - do not start a task until asked to start
-  - Top-level tasks show up with a task ID ('Txxx', e.g. `T001`), followed by a general description
+  - top-level tasks are defined by a task ID ('Txxx', e.g. `T001`), followed by a short description
   - sub-tasks start on a newline and a dash ('-'), followed by a general description
   - when I ask you to complete a task I'll refer to it by its top-level task ID (e.g. "please complete task T003")
   - when you complete one or more sub-tasks, replace the dash ('-') with a pipe ('|') to indicate that you believe that subtask is done
+  - there should be exactly one blank line between top-level tasks

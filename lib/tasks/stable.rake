@@ -17,7 +17,7 @@ namespace :stable do
       facts << Stable::Fact.from_jsonl(line)
     end
 
-    formatter = Stable::Formatters::Verbose.new(facts)
+      formatter = Stable.configuration.formatter.new(facts)
     puts formatter.header
     facts.each do |fact|
       fact.run!
@@ -36,7 +36,7 @@ namespace :stable do
         File.foreach(file).map { |line| Stable::Fact.from_jsonl(line) }
       end
 
-      formatter = Stable::Formatters::Verbose.new(facts)
+    formatter = Stable.configuration.formatter.new(facts)
       puts formatter.header
 
       filter = args[:filter].to_s.strip.downcase

@@ -8,9 +8,9 @@ module Stable
   # outputs. it's a self-contained, serializable representation of a method's
   # behavior at a specific point in time.
   class Fact
-    attr_reader :class_name, :method_name, :args, :result, :error, :actual_result, :actual_error, :status, :uuid, :signature, :name
+    attr_reader :class_name, :method_name, :args, :result, :error, :actual_result, :actual_error, :status, :uuid, :signature, :name, :source_file
 
-    def initialize(class_name:, method_name:, args:, result: nil, error: nil, uuid: SecureRandom.uuid, name: nil)
+    def initialize(class_name:, method_name:, args:, result: nil, error: nil, uuid: SecureRandom.uuid, name: nil, source_file: nil)
       @class_name = class_name
       @method_name = method_name
       @args = args
@@ -19,7 +19,8 @@ module Stable
       @status = :pending
       @uuid = uuid
       @signature = Digest::SHA256.hexdigest("#{class_name}##{method_name}:#{args.to_json}")
-      @name = name || SecureRandom.hex(8)
+      @name = name || uuid.split('-').last
+      @source_file = source_file
     end
 
     def name=(new_name)
@@ -51,6 +52,21 @@ module Stable
       self
     end
 
+    def update!
+      if actual_error
+        @error = {
+          class: actual_error.class.name,
+          message: actual_error.message,
+          backtrace: actual_error.backtrace
+        }
+        @result = nil
+      else
+        @result = actual_result
+        @error = nil
+      end
+      @status = :passed
+    end
+
 
 
     def to_jsonl
@@ -66,7 +82,7 @@ module Stable
       }.compact.to_json
     end
 
-    def self.from_jsonl(jsonl_string)
+    def self.from_jsonl(jsonl_string, source_file = nil)
       data = JSON.parse(jsonl_string)
       new(
         class_name: data['class'],
@@ -75,7 +91,8 @@ module Stable
         result: data['result'],
         error: data['error'],
         uuid: data['uuid'],
-        name: data['name']
+        name: data['name'],
+        source_file: source_file
       )
     end
 

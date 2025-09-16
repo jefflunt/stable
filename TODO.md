@@ -8,13 +8,6 @@ T012: create an interactive `rake stable:update` task
   - if the user rejects the update, then the standard failure is tracked
 - after an interactive update session, rewrite the storage file with the changes
 
-T019: Refactor from "spec" to "fact" and standardize file locations
-| rename `Stable::Spec` to `Stable::Fact` and `lib/stable/spec.rb` to `lib/stable/fact.rb`
-| rename `config.spec_paths` to `config.fact_paths` and set the default to `['facts/**/*.fact']`
-| create a top-level `facts/` directory for fact files
-| move the example `calculator.jsonl` to `facts/calculator.fact`
-| update all rake tasks to use the new terminology and file discovery logic
-| update the `README.md` to reflect the new "fact" terminology and conventions
 
 T021: Extract verification formatting to `Stable::VerboseFormatter`
 - Create `Stable::VerboseFormatter` class

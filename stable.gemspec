@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = "stable"
-  s.version     = "1.10.0"
+  s.version     = "1.11.0"
   s.description = "an automatic unit test system that captures your usage and records it for future playback"
   s.summary     = "an automatic unit test system that captures your usage and records it for future playback"
   s.authors     = ["Jeff Lunt"]

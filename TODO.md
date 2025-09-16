@@ -12,8 +12,3 @@ T012: create an interactive `rake stable:update` task
 T022: create an interactive console for exploring specs
 - `rake stable:console` should load all specs into an IRB session
 - the console should provide a `specs` variable containing all loaded specs
-
-T023: Make the output formatter configurable
-| add a `formatter` option to `Stable::Configuration`
-| the default should be `Stable::Formatters::Verbose`
-| update the rake tasks to use the configured formatter

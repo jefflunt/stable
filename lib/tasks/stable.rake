@@ -125,7 +125,7 @@ namespace :stable do
     end
   end
 
-  def _load_facts(filter)
+  def _load_facts(filter = nil)
     _filter_facts(
       Dir
         .glob(Stable.configuration.fact_paths)

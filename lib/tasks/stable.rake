@@ -17,7 +17,7 @@ namespace :stable do
       facts << Stable::Fact.from_jsonl(line)
     end
 
-    formatter = Stable.configuration.formatter.new(facts)
+    formatter = Stable.configuration.formatter.new
     puts formatter.header
 
     _filter_facts(facts, args[:filter].to_s.strip.downcase).each do |fact|
@@ -32,7 +32,7 @@ namespace :stable do
   task :verify, [:filter] do |t, args|
     facts = _load_facts(args[:filter])
 
-    formatter = Stable.configuration.formatter.new(facts)
+    formatter = Stable.configuration.formatter.new
 
     if facts.empty?
       puts "no stable facts found"
@@ -84,7 +84,7 @@ namespace :stable do
   task :update, [:filter] do |t, args|
     facts = _load_facts(args[:filter])
 
-    formatter = Stable.configuration.formatter.new(facts)
+    formatter = Stable.configuration.formatter.new
 
     if facts.empty?
       puts "no stable facts found"

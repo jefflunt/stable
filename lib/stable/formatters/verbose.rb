@@ -4,9 +4,12 @@ require_relative 'colors'
 module Stable
   module Formatters
     class Verbose
-      def initialize(facts)
-        @facts = facts
+      def initialize
         @start_time = Time.now
+        @passed_count = 0
+        @failed_count = 0
+        @pending_count = 0
+        @total_count = 0
       end
 
       def to_s(fact)
@@ -18,10 +21,13 @@ module Stable
         status_code = _status_code(fact)
         error_code = _error_code(fact)
 
+        @total_count += 1
         case fact.status
         when :passed, :passed_with_error
+          @passed_count += 1
           "#{desc} #{name_str} #{status_code}#{error_code} #{call}"
         when :failed
+          @failed_count += 1
           lines = ["#{desc} #{name_str} #{status_code}#{error_code} #{call}"]
           if fact.actual_error
             if fact.error
@@ -42,6 +48,7 @@ module Stable
           end
           lines.join("\n")
         else
+          @pending_count += 1
           "#{desc} #{name_str} #{status_code}#{error_code} #{call}"
         end
       end
@@ -52,11 +59,8 @@ module Stable
       end
 
       def summary
-        passing = @facts.count { |f| f.status == :passed || f.status == :passed_with_error }
-        failing = @facts.count { |f| f.status == :failed }
-        pending = @facts.count { |f| f.status == :pending }
         runtime = Time.now - @start_time
-        "\n#{@facts.count} facts, #{passing} passing, #{pending} pending, #{failing} failing, finished in #{runtime.round(2)}s"
+        "\n#{@total_count} facts, #{@passed_count} passing, #{@pending_count} pending, #{@failed_count} failing, finished in #{runtime.round(2)}s"
       end
 
 

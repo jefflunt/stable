@@ -79,15 +79,16 @@ like this:
 ```
 uuid        / sig    name                 st call
 -------------------- -------------------- -- -----------------------------------
-d171f8670b44/9a1ebf5 adds two numbers      P N Calculator#add(5, 3)
-e109cff2711a/eb9b4f4 subtracts two number  P N Calculator#subtract(10, 4)
-773e89e8a29c/3bfd044 divides two numbers   P N Calculator#divide(10, 2)
-f215b43e0293/4a8c65e dividing by zero      P E Calculator#divide(5, 0)
-567890abcdef/6e3b24a 2 + 2 = 5             F N Calculator#add(2, 2)
+d171f8670b44/e4fbea7 adds two numbers      P N Calculator#add(5, 3)
+e109cff2711a/93d6a97 subtracts two number  P N Calculator#subtract(10, 4)
+773e89e8a29c/cde5b5b divides two numbers   P N Calculator#divide(10, 2)
+f215b43e0293/a13bcea dividing by zero      P E Calculator#divide(5, 0)
+567890abcdef/5d770d0 2 + 2 = 5             F N Calculator#add(2, 2)
   Expected: 5
   Actual:   4
+d10cab6a30ca/9ee270f adds with keyword ar  P N KwCalculator#add(10)
 
-5 facts, 4 passing, 0 pending, 1 failing, finished in 0.0s
+6 facts, 5 passing, 0 pending, 1 failing, finished in 0.0s
 ```
 
 If we introduce a bug into `Calculator#add` (e.g., `a - b` instead of `a + b`),

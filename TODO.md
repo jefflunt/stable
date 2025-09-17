@@ -9,8 +9,8 @@ T030: add comprehensive method watching support
 - | create a new `class_methods.rb` example and fact file
 - | create and run a temporary `rake stable:class_example` to verify
 - Phase 3: Implement watch_all and Clean Up
-- - implement the `Stable.watch_all` method with an `:except` option
-- - create a new example and temporary Rake task to test `watch_all`
-- - merge new examples into the main `stable:example` task
-- - remove all temporary tasks and fact files
-- - update `README.md` with documentation for the new features
+- | implement the `Stable.watch_all` method with an `:except` option
+- | create a new example and temporary Rake task to test `watch_all`
+- | merge new examples into the main `stable:example` task
+- | remove all temporary tasks and fact files
+- | update `README.md` with documentation for the new features

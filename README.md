@@ -174,3 +174,13 @@ Here is a breakdown of each attribute in the JSON record:
   a convenient way to reference a specific fact. You can also assign your own
   name to a fact to make it even easier to identify.
 
+### 4. Watching All Methods in a Class
+
+For convenience, you can use the `watch_all` method to watch all public instance and class methods on a class or module. This is a great way to get broad coverage quickly.
+
+```ruby
+Stable.watch_all(Calculator, except: [:subtract])
+```
+
+This will watch all public methods on the `Calculator` class, except for the `subtract` method.
+

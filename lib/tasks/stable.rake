@@ -7,6 +7,7 @@ namespace :stable do
   task :example, [:filter] do |t, args|
     require_relative '../../lib/example/calculator'
     require_relative '../../lib/example/kw_calculator'
+    require_relative '../../lib/example/class_methods'
 
     fact_path = File.expand_path('../../../facts/calculator.fact.example', __FILE__)
     Stable.configure do |config|
@@ -22,31 +23,6 @@ namespace :stable do
     puts formatter.header
 
     _filter_facts(facts, args[:filter].to_s.strip.downcase).each do |fact|
-      fact.run!
-      puts formatter.to_s(fact)
-    end
-
-    puts formatter.summary
-  end
-
-  desc "run the class_methods example verification"
-  task :class_example do |t, args|
-    require_relative '../../lib/example/class_methods'
-
-    fact_path = File.expand_path('../../../facts/class_methods.fact.example', __FILE__)
-    Stable.configure do |config|
-      config.storage_path = fact_path
-    end
-
-    facts = []
-    File.foreach(Stable.configuration.storage_path) do |line|
-      facts << Stable::Fact.from_jsonl(line)
-    end
-
-    formatter = Stable.configuration.formatter.new
-    puts formatter.header
-
-    facts.each do |fact|
       fact.run!
       puts formatter.to_s(fact)
     end
@@ -70,41 +46,6 @@ namespace :stable do
         fact.run!
         puts formatter.to_s(fact)
       end
-
-    puts formatter.summary
-  end
-
-  desc "run the watch_all example verification"
-  task :watch_all_example do |t, args|
-    require_relative '../../lib/example/watch_all_target'
-
-    fact_path = File.expand_path('../../../facts/watch_all.fact.example', __FILE__)
-    Stable.configure do |config|
-      config.storage_path = fact_path
-    end
-
-    Stable.watch_all(WatchAllTarget, except: [:an_excluded_method])
-
-    Stable.recording do
-      WatchAllTarget.a_class_method
-      instance = WatchAllTarget.new
-      instance.an_instance_method
-      instance.another_instance_method
-      instance.an_excluded_method
-    end
-
-    facts = []
-    File.foreach(Stable.configuration.storage_path) do |line|
-      facts << Stable::Fact.from_jsonl(line)
-    end
-
-    formatter = Stable.configuration.formatter.new
-    puts formatter.header
-
-    facts.each do |fact|
-      fact.run!
-      puts formatter.to_s(fact)
-    end
 
     puts formatter.summary
   end

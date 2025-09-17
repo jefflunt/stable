@@ -1,8 +1,8 @@
 
 T030: add comprehensive method watching support
 - Phase 1: Enhance Stable::Fact
-- - add `method_type` attribute to the Fact class
-- - verify backward compatibility by running `rake stable:example`
+- | add `method_type` attribute to the Fact class
+- | verify backward compatibility by running `rake stable:example`
 - Phase 2: Enhance Stable.watch
 - - modify `Stable.watch` to accept a `type:` parameter
 - - handle `UnboundMethod` vs. `Method` logic correctly

@@ -29,6 +29,31 @@ namespace :stable do
     puts formatter.summary
   end
 
+  desc "run the class_methods example verification"
+  task :class_example do |t, args|
+    require_relative '../../lib/example/class_methods'
+
+    fact_path = File.expand_path('../../../facts/class_methods.fact.example', __FILE__)
+    Stable.configure do |config|
+      config.storage_path = fact_path
+    end
+
+    facts = []
+    File.foreach(Stable.configuration.storage_path) do |line|
+      facts << Stable::Fact.from_jsonl(line)
+    end
+
+    formatter = Stable.configuration.formatter.new
+    puts formatter.header
+
+    facts.each do |fact|
+      fact.run!
+      puts formatter.to_s(fact)
+    end
+
+    puts formatter.summary
+  end
+
   desc "verify facts"
   task :verify, [:filter] do |t, args|
     facts = _load_facts(args[:filter])

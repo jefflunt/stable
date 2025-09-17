@@ -1,0 +1,2 @@
+{"class":"MyModule","method":"do_something","method_type":"class","args":["a thing"],"kwargs":{},"result":"module did a thing","uuid":"c764ac20-1561-4657-af98-c2091734b4ea","signature":"d62d4332321b98530a0280e35939f29270b853036631379090381b68d12a426f","name":"c2091734b4ea"}
+{"class":"MyClass","method":"do_something_else","method_type":"class","args":["another thing"],"kwargs":{},"result":"class did another thing","uuid":"c764ac20-1561-4657-af98-f5c68ce4860b","signature":"910542e2128825b033b283e4337ed200b596802061a815834b123b4dfb0a5321","name":"f5c68ce4860b"}

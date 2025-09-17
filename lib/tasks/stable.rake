@@ -71,8 +71,43 @@ namespace :stable do
         puts formatter.to_s(fact)
       end
 
-      puts formatter.summary
+    puts formatter.summary
+  end
+
+  desc "run the watch_all example verification"
+  task :watch_all_example do |t, args|
+    require_relative '../../lib/example/watch_all_target'
+
+    fact_path = File.expand_path('../../../facts/watch_all.fact.example', __FILE__)
+    Stable.configure do |config|
+      config.storage_path = fact_path
     end
+
+    Stable.watch_all(WatchAllTarget, except: [:an_excluded_method])
+
+    Stable.recording do
+      WatchAllTarget.a_class_method
+      instance = WatchAllTarget.new
+      instance.an_instance_method
+      instance.another_instance_method
+      instance.an_excluded_method
+    end
+
+    facts = []
+    File.foreach(Stable.configuration.storage_path) do |line|
+      facts << Stable::Fact.from_jsonl(line)
+    end
+
+    formatter = Stable.configuration.formatter.new
+    puts formatter.header
+
+    facts.each do |fact|
+      fact.run!
+      puts formatter.to_s(fact)
+    end
+
+    puts formatter.summary
+  end
   end
 
   desc "delete all stable fact files"

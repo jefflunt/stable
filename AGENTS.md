@@ -46,3 +46,9 @@ This document provides instructions for AI agents operating in this repository.
   - when I ask you to complete a task I'll refer to it by its top-level task ID (e.g. "please complete task T003")
   - when you complete one or more sub-tasks, replace the dash ('-') with a pipe ('|') to indicate that you believe that subtask is done
   - there should be exactly one blank line between top-level tasks
+
+  - When starting a new task:
+    - check the current state of the repo, and make sure that there aren't any uncommitted changes. if there are uncommitted changes, simply abort and let me know.
+    - create a new branch named after the task, and make sure to branch off of `main`
+    - commit your changes as you go: that is, do an incremental commit with every subtask, even if the code isn't fully working yet
+    - at the end of the task, test the code again to ensure it looks like it's working correctly

@@ -32,7 +32,10 @@ This document provides instructions for AI agents operating in this repository.
   - Follow standard Ruby conventions.
   - minimize the use of temporary variables
   - make ample use of method chaining when possible
-  - supporting functions (e.g. those that start with an underscore) should go under the last function that uses them
+  - helper methods should be:
+    - prefixed with an underscore
+    - not be defined as `private`
+    - placed below the tasks that use them
 
 ## Planning
 

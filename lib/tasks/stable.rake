@@ -82,7 +82,7 @@ namespace :stable do
 
   desc "interactively update failing facts"
   task :update, [:filter] do |t, args|
-    facts = _load_facts
+    facts = _load_facts(args[:filter])
 
     formatter = Stable.configuration.formatter.new(facts)
 

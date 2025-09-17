@@ -42,7 +42,7 @@ require_relative 'calculator'
 
 # Configure stable to save facts to a specific file
 Stable.configure do |config|
-  config.storage_path = 'facts/calculator.fact'
+  config.fact_paths = ['facts/calculator.fact']
 end
 
 # Watch the :add method on the Calculator class
@@ -81,8 +81,13 @@ uuid        / sig    name                 st call
 -------------------- -------------------- -- -----------------------------------
 d171f8670b44/9a1ebf5 adds two numbers      P N Calculator#add(5, 3)
 e109cff2711a/eb9b4f4 subtracts two number  P N Calculator#subtract(10, 4)
+773e89e8a29c/3bfd044 divides two numbers   P N Calculator#divide(10, 2)
+f215b43e0293/4a8c65e dividing by zero      P E Calculator#divide(5, 0)
+567890abcdef/6e3b24a 2 + 2 = 5             F N Calculator#add(2, 2)
+  Expected: 5
+  Actual:   4
 
-2 facts, 2 passing, 0 pending, 0 failing
+5 facts, 4 passing, 0 pending, 1 failing, finished in 0.0s
 ```
 
 If we introduce a bug into `Calculator#add` (e.g., `a - b` instead of `a + b`),
@@ -102,6 +107,18 @@ e109cff2711a/eb9b4f4 subtracts two number  F N Calculator#subtract(10, 4)
 ```
 
 This tells you exactly which interactions have regressed.
+
+#### Filtering Facts
+
+You can run the `verify` and `update` tasks on a subset of your facts by passing a filter string. The filter will match against the fact's UUID, name, or class name.
+
+```bash
+# Verify only facts related to the "divide" method
+$ rake stable:verify[divide]
+
+# Interactively update a specific fact by its UUID
+$ rake stable:update[567890abcdef]
+```
 
 ### 3. Updating Facts
 

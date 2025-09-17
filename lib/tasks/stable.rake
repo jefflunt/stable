@@ -20,19 +20,17 @@ namespace :stable do
     formatter = Stable.configuration.formatter.new(facts)
     puts formatter.header
 
-    _filter_facts(facts, _clean_filter(args[:filter])).each do |fact|
+    _filter_facts(facts, args[:filter].to_s.strip.downcase).each do |fact|
       fact.run!
       puts formatter.to_s(fact)
     end
+
     puts formatter.summary
   end
 
   desc "verify facts"
   task :verify, [:filter] do |t, args|
-    fact_files = Dir.glob(Stable.configuration.fact_paths)
-    facts = fact_files.flat_map do |file|
-      File.foreach(file).map { |line| Stable::Fact.from_jsonl(line, file) }
-    end
+    facts = _load_facts(args[:filter])
 
     formatter = Stable.configuration.formatter.new(facts)
 
@@ -42,10 +40,11 @@ namespace :stable do
     else
       puts formatter.header
 
-      _filter_facts(facts, _clean_filter(args[:filter])).each do |fact|
+      facts.each do |fact|
         fact.run!
         puts formatter.to_s(fact)
       end
+
       puts formatter.summary
     end
   end
@@ -74,12 +73,7 @@ namespace :stable do
     require 'irb'
 
     def facts
-      @facts ||= begin
-        fact_files = Dir.glob(Stable.configuration.fact_paths)
-        fact_files.flat_map do |file|
-          File.foreach(file).map { |line| Stable::Fact.from_jsonl(line, file) }
-        end
-      end
+      @facts ||= _load_facts
     end
 
     puts "loaded #{facts.count} facts into the `facts` method"
@@ -88,10 +82,7 @@ namespace :stable do
 
   desc "interactively update failing facts"
   task :update, [:filter] do |t, args|
-    fact_files = Dir.glob(Stable.configuration.fact_paths)
-    facts = fact_files.flat_map do |file|
-      File.foreach(file).map { |line| Stable::Fact.from_jsonl(line, file) }
-    end
+    facts = _load_facts
 
     formatter = Stable.configuration.formatter.new(facts)
 
@@ -133,14 +124,24 @@ namespace :stable do
     end
   end
 
-  def _clean_filter(filter)
-    filter.to_s.strip.downcase
+  def _load_facts(filter)
+    _filter_facts(
+      Dir
+        .glob(Stable.configuration.fact_paths)
+        .flat_map do |file|
+          File.foreach(file).map { |line| Stable::Fact.from_jsonl(line, file) }
+        end,
+      filter.to_s.strip.downcase
+    )
+
   end
 
   def _filter_facts(facts, filter)
     return facts if filter.empty?
     facts.select do |fact|
-      fact.uuid.include?(filter) || fact.class_name.downcase.include?(filter) || fact.name.downcase.include?(filter)
+      fact.uuid.include?(filter) ||
+        fact.class_name.downcase.include?(filter) ||
+        fact.name.downcase.include?(filter)
     end
   end
 end

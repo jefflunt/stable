@@ -1,8 +1,8 @@
 T029: add support for keyword arguments
-- modify the `watch` method to correctly capture keyword arguments
-- update the `Fact` class to store keyword arguments separately
-- ensure the `run!` method can correctly replay methods with keyword arguments
-- add an example fact with keyword arguments to verify the implementation
+| modify the `watch` method to correctly capture keyword arguments
+| update the `Fact` class to store keyword arguments separately
+| ensure the `run!` method can correctly replay methods with keyword arguments
+| add an example fact with keyword arguments to verify the implementation
 
 T030: add comprehensive method watching support
 - enhance `Stable.watch` to support class and module methods (e.g., via a `type` option)

@@ -3,3 +3,4 @@
 {"class":"Calculator","method":"divide","args":[10,2],"result":5.0,"uuid":"f642cfda-1419-41fc-ab70-773e89e8a29c","signature":"3bfd04452b5fbde3b83b9260d3c0a8a0b94cdadb0d773341456df99e7ab35102","name":"divides two numbers"}
 {"class":"Calculator","method":"divide","args":[5,0],"error":{"class":"ZeroDivisionError","message":"Cannot divide by zero"},"uuid":"74591887-b601-4a8c-9b1a-f215b43e0293","signature":"4a8c65ef6b855fa0f232005c2d8a8d7f4301150f176a7b11bdab51110cdcd3d1","name":"dividing by zero"}
 {"class":"Calculator","method":"add","args":[2,2],"result":5,"uuid":"a1b2c3d4-e5f6-7890-1234-567890abcdef","signature":"d1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2","name":"2 + 2 = 5"}
+{"class":"KwCalculator","method":"add","args":[10],"kwargs":{"b":20,"c":30},"result":60,"uuid":"c764ac20-1561-4657-af98-d10cab6a30ca","signature":"9ee270f45560caffb05c3869c0bd6fb940c802c53d1492a667214332d5a20f6b","name":"adds with keyword args"}

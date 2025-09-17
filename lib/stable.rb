@@ -60,14 +60,15 @@ module Stable
     def watch(klass, method_name)
       original_method = klass.instance_method(method_name)
       wrapper_module = Module.new do
-        define_method(method_name) do |*args, &block|
+        define_method(method_name) do |*args, **kwargs, &block|
           if Stable.enabled?
             begin
-              result = original_method.bind(self).call(*args, &block)
+              result = original_method.bind(self).call(*args, **kwargs, &block)
               fact = Fact.new(
                 class_name: klass.name,
                 method_name: method_name,
                 args: args,
+                kwargs: kwargs,
                 result: result
               )
               unless Stable.send(:_fact_exists?, fact.signature)
@@ -81,6 +82,7 @@ module Stable
                 class_name: klass.name,
                 method_name: method_name,
                 args: args,
+                kwargs: kwargs,
                 error: {
                   class: e.class.name,
                   message: e.message,
@@ -95,7 +97,7 @@ module Stable
               raise e
             end
           else
-            original_method.bind(self).call(*args, &block)
+            original_method.bind(self).call(*args, **kwargs, &block)
           end
         end
       end

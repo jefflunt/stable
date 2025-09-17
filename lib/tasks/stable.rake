@@ -6,6 +6,7 @@ namespace :stable do
   desc "run the example verification"
   task :example, [:filter] do |t, args|
     require_relative '../../lib/example/calculator'
+    require_relative '../../lib/example/kw_calculator'
 
     fact_path = File.expand_path('../../../facts/calculator.fact.example', __FILE__)
     Stable.configure do |config|

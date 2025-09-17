@@ -8,17 +8,18 @@ module Stable
   # outputs. it's a self-contained, serializable representation of a method's
   # behavior at a specific point in time.
   class Fact
-    attr_reader :class_name, :method_name, :args, :result, :error, :actual_result, :actual_error, :status, :uuid, :signature, :name, :source_file
+    attr_reader :class_name, :method_name, :args, :kwargs, :result, :error, :actual_result, :actual_error, :status, :uuid, :signature, :name, :source_file
 
-    def initialize(class_name:, method_name:, args:, result: nil, error: nil, uuid: SecureRandom.uuid, name: nil, source_file: nil)
+    def initialize(class_name:, method_name:, args:, kwargs: {}, result: nil, error: nil, uuid: SecureRandom.uuid, name: nil, source_file: nil)
       @class_name = class_name
       @method_name = method_name
       @args = args
+      @kwargs = (kwargs || {}).transform_keys(&:to_sym)
       @result = result
       @error = error
       @status = :pending
       @uuid = uuid
-      @signature = Digest::SHA256.hexdigest("#{class_name}##{method_name}:#{args.to_json}")
+      @signature = Digest::SHA256.hexdigest("#{class_name}##{method_name}:#{args.to_json}:#{kwargs.to_json}")
       @name = name || uuid.split('-').last
       @source_file = source_file
     end
@@ -33,7 +34,7 @@ module Stable
       begin
         klass = Object.const_get(class_name)
         instance = klass.new
-        @actual_result = instance.public_send(method_name, *args)
+        @actual_result = instance.public_send(method_name, *args, **kwargs)
         if error
           @status = :failed
         elsif actual_result == result
@@ -74,6 +75,7 @@ module Stable
         class: class_name,
         method: method_name,
         args: args,
+        kwargs: kwargs,
         result: result,
         error: error,
         uuid: uuid,
@@ -88,6 +90,7 @@ module Stable
         class_name: data['class'],
         method_name: data['method'],
         args: data['args'],
+        kwargs: data['kwargs'],
         result: data['result'],
         error: data['error'],
         uuid: data['uuid'],

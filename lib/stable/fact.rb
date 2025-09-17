@@ -8,11 +8,12 @@ module Stable
   # outputs. it's a self-contained, serializable representation of a method's
   # behavior at a specific point in time.
   class Fact
-    attr_reader :class_name, :method_name, :args, :kwargs, :result, :error, :actual_result, :actual_error, :status, :uuid, :signature, :name, :source_file
+    attr_reader :class_name, :method_name, :method_type, :args, :kwargs, :result, :error, :actual_result, :actual_error, :status, :uuid, :signature, :name, :source_file
 
-    def initialize(class_name:, method_name:, args:, kwargs: {}, result: nil, error: nil, uuid: SecureRandom.uuid, name: nil, source_file: nil)
+    def initialize(class_name:, method_name:, args:, method_type: :instance, kwargs: {}, result: nil, error: nil, uuid: SecureRandom.uuid, name: nil, source_file: nil)
       @class_name = class_name
       @method_name = method_name
+      @method_type = method_type
       @args = args
       @kwargs = (kwargs || {}).transform_keys(&:to_sym)
       @result = result
@@ -33,8 +34,12 @@ module Stable
     def run!
       begin
         klass = Object.const_get(class_name)
-        instance = klass.new
-        @actual_result = instance.public_send(method_name, *args, **kwargs)
+        if method_type == :instance
+          instance = klass.new
+          @actual_result = instance.public_send(method_name, *args, **kwargs)
+        else
+          @actual_result = klass.public_send(method_name, *args, **kwargs)
+        end
         if error
           @status = :failed
         elsif actual_result == result
@@ -74,6 +79,7 @@ module Stable
       {
         class: class_name,
         method: method_name,
+        method_type: method_type,
         args: args,
         kwargs: kwargs,
         result: result,
@@ -89,6 +95,7 @@ module Stable
       new(
         class_name: data['class'],
         method_name: data['method'],
+        method_type: (data['method_type'] || :instance).to_sym,
         args: data['args'],
         kwargs: data['kwargs'],
         result: data['result'],

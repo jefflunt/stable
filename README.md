@@ -147,6 +147,16 @@ d171f8670b44/9a1ebf5 adds two numbers      F N Calculator#add(5, 3)
 
 If you enter `y`, the `.fact` file will be permanently updated with the new result. If you enter `n` or anything else, the original fact will be kept. This workflow makes it easy to review and approve changes to your system's behavior.
 
+### 4. Watching All Methods in a Class
+
+For convenience, you can use the `watch_all` method to watch all public instance and class methods on a class or module. This is a great way to get broad coverage quickly.
+
+```ruby
+Stable.watch_all(Calculator, except: [:subtract])
+```
+
+This will watch all public methods on the `Calculator` class, except for the `subtract` method.
+
 ## Deep Dive: The Fact File
 
 Each line in a `.fact` file represents a single recorded interaction, parsed
@@ -175,14 +185,3 @@ Here is a breakdown of each attribute in the JSON record:
   is the ID you see in the output of the `rake stable:verify` task. It provides
   a convenient way to reference a specific fact. You can also assign your own
   name to a fact to make it even easier to identify.
-
-### 4. Watching All Methods in a Class
-
-For convenience, you can use the `watch_all` method to watch all public instance and class methods on a class or module. This is a great way to get broad coverage quickly.
-
-```ruby
-Stable.watch_all(Calculator, except: [:subtract])
-```
-
-This will watch all public methods on the `Calculator` class, except for the `subtract` method.
-

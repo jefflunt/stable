@@ -2,6 +2,8 @@
 
 # stable
 
+> All unit tests are ultimately regression tests. In this way, regression testing is all you ever need. Why not make it easy and automated?
+
 `stable` is a library for recording and replaying method calls to prevent
 regressions. The goal is to reduce the amount of manual unit tests you need
 to write, while keeping the stability and notification system that unit tests

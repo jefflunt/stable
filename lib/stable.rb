@@ -57,16 +57,19 @@ module Stable
       @storage = nil
     end
 
-    def watch(klass, method_name)
-      original_method = klass.instance_method(method_name)
+    def watch(klass, method_name, type: :instance)
+      original_method = type == :instance ? klass.instance_method(method_name) : klass.method(method_name)
+      target = type == :instance ? klass : klass.singleton_class
+
       wrapper_module = Module.new do
         define_method(method_name) do |*args, **kwargs, &block|
           if Stable.enabled?
             begin
-              result = original_method.bind(self).call(*args, **kwargs, &block)
+              result = original_method.is_a?(UnboundMethod) ? original_method.bind(self).call(*args, **kwargs, &block) : original_method.call(*args, **kwargs, &block)
               fact = Fact.new(
                 class_name: klass.name,
                 method_name: method_name,
+                method_type: type,
                 args: args,
                 kwargs: kwargs,
                 result: result
@@ -81,6 +84,7 @@ module Stable
               fact = Fact.new(
                 class_name: klass.name,
                 method_name: method_name,
+                method_type: type,
                 args: args,
                 kwargs: kwargs,
                 error: {
@@ -97,11 +101,11 @@ module Stable
               raise e
             end
           else
-            original_method.bind(self).call(*args, **kwargs, &block)
+            original_method.is_a?(UnboundMethod) ? original_method.bind(self).call(*args, **kwargs, &block) : original_method.call(*args, **kwargs, &block)
           end
         end
       end
-      klass.prepend(wrapper_module)
+      target.prepend(wrapper_module)
     end
 
     def verify(record_hash)

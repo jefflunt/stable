@@ -108,6 +108,18 @@ module Stable
       target.prepend(wrapper_module)
     end
 
+    def watch_all(klass, except: [])
+      klass.public_instance_methods(false).each do |method_name|
+        next if except.include?(method_name)
+        watch(klass, method_name, type: :instance)
+      end
+
+      klass.public_methods(false).each do |method_name|
+        next if except.include?(method_name)
+        watch(klass, method_name, type: :class)
+      end
+    end
+
     def verify(record_hash)
       Fact.from_jsonl(record_hash.to_json).run!
     end

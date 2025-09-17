@@ -30,6 +30,8 @@ This document provides instructions for AI agents operating in this repository.
   - limit the text width of the documentation to 80 colums
 - **General:**
   - Follow standard Ruby conventions.
+  - minimize the use of temporary variables
+  - supporting functions (e.g. those that start with an underscore) should go under the last function that uses them
 
 ## Planning
 

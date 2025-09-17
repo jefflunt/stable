@@ -4,7 +4,7 @@ require_relative '../stable/formatters/verbose'
 
 namespace :stable do
   desc "run the example verification"
-  task :example do
+  task :example, [:filter] do |t, args|
     require_relative '../../lib/example/calculator'
 
     fact_path = File.expand_path('../../../facts/calculator.fact.example', __FILE__)
@@ -17,9 +17,10 @@ namespace :stable do
       facts << Stable::Fact.from_jsonl(line)
     end
 
-      formatter = Stable.configuration.formatter.new(facts)
+    formatter = Stable.configuration.formatter.new(facts)
     puts formatter.header
-    facts.each do |fact|
+
+    _filter_facts(facts, _clean_filter(args[:filter])).each do |fact|
       fact.run!
       puts formatter.to_s(fact)
     end
@@ -41,12 +42,9 @@ namespace :stable do
     else
       puts formatter.header
 
-      filter = args[:filter].to_s.strip.downcase
-      facts.each do |fact|
-        if filter.empty? || fact.uuid.include?(filter) || fact.class_name.downcase.include?(filter) || fact.name.downcase.include?(filter)
-          fact.run!
-          puts formatter.to_s(fact)
-        end
+      _filter_facts(facts, _clean_filter(args[:filter])).each do |fact|
+        fact.run!
+        puts formatter.to_s(fact)
       end
       puts formatter.summary
     end
@@ -104,21 +102,18 @@ namespace :stable do
       puts formatter.header
 
       updated_facts = []
-      filter = args[:filter].to_s.strip.downcase
-      facts.each do |fact|
-        if filter.empty? || fact.uuid.include?(filter) || fact.class_name.downcase.include?(filter) || fact.name.downcase.include?(filter)
-          fact.run!
-          if fact.status == :failed
-            puts formatter.to_s(fact)
-            print "  update this fact? (y/n): "
-            answer = STDIN.gets
-            if answer && answer.chomp.downcase == 'y'
-              fact.update!
-              updated_facts << fact
-              puts "  updated."
-            else
-              puts "  skipped."
-            end
+      _filter_facts(facts, _clean_filter(args[:filter])).each do |fact|
+        fact.run!
+        if fact.status == :failed
+          puts formatter.to_s(fact)
+          print "  update this fact? (y/n): "
+          answer = STDIN.gets
+          if answer && answer.chomp.downcase == 'y'
+            fact.update!
+            updated_facts << fact
+            puts "  updated."
+          else
+            puts "  skipped."
           end
         end
       end
@@ -135,6 +130,17 @@ namespace :stable do
       else
         puts "\nno facts updated."
       end
+    end
+  end
+
+  def _clean_filter(filter)
+    filter.to_s.strip.downcase
+  end
+
+  def _filter_facts(facts, filter)
+    return facts if filter.empty?
+    facts.select do |fact|
+      fact.uuid.include?(filter) || fact.class_name.downcase.include?(filter) || fact.name.downcase.include?(filter)
     end
   end
 end

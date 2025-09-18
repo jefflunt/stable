@@ -1,4 +1,4 @@
-> All unit tests are ultimately regression tests. In this way, regression testing is all you ever need. Why not make it easy and automated?
+All unit tests are ultimately regression tests. In this way, regression testing is all you ever need. Why not make it easy and automated?
 
 <p align="center"><img src="logo.png" width="600"></p>
 

@@ -1,3 +1,3 @@
 module Stable
-  VERSION = "1.18.0"
+  VERSION = "1.18.1"
 end

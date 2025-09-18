@@ -3,8 +3,20 @@ set -e
 
 # check if a version number is provided
 if [ -z "$1" ]; then
-  echo "Usage: ./release <version>"
+  echo "usage: ./release <version>"
   exit 1
+fi
+
+# check for uncommitted changes
+if ! git diff-index --quiet HEAD --; then
+  echo "there are uncommitted changes. please commit or stash them before releasing."
+  exit 2
+fi
+
+# check for being on the main branch
+if [ "$(git rev-parse --abbrev-ref HEAD)" != "main" ]; then
+  echo "you must be on the main branch to release."
+  exit 3
 fi
 
 VERSION=$1

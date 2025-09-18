@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.summary     = "an automatic unit/regression test system that captures your usage and records it for future playback"
   s.authors     = ["Jeff Lunt"]
   s.email       = "jefflunt@gmail.com"
-  s.files       = Dir["lib/**/*.rb"]
+  s.files       = Dir["lib/**/*.rb", "lib/**/*.rake"]
   s.homepage    = "https://github.com/jefflunt/stable"
   s.license     = "MIT"
   s.required_ruby_version = ">= 3.4"

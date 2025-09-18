@@ -19,6 +19,12 @@ if [ "$(git rev-parse --abbrev-ref HEAD)" != "main" ]; then
   exit 3
 fi
 
+# check if the current commit is already tagged
+if [ -n "$(git tag --points-at HEAD)" ]; then
+  echo "the current commit is already tagged. if you still want to tag and release, you must do so manually."
+  exit 4
+fi
+
 VERSION=$1
 VERSION_FILE="lib/stable/version.rb"
 

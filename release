@@ -28,3 +28,5 @@ git tag $VERSION
 git push && git push --tags
 
 echo "release script finished."
+
+gem push stable-$VERSION.gem

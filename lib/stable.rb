@@ -4,8 +4,9 @@ require_relative 'stable/version'
 require_relative 'stable/fact'
 require_relative 'stable/configuration'
 
-if defined?(Rake)
-  require_relative 'tasks/stable.rake'
+if defined?(Rake) && !defined?(STABLE_RAKE_LOADED)
+  STABLE_RAKE_LOADED = true
+  load File.expand_path('../tasks/stable.rake', __FILE__)
 end
 
 module Stable

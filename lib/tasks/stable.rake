@@ -1,4 +1,4 @@
-# lib/tasks/stable.rake
+require 'rake'
 require_relative '../stable'
 require_relative '../stable/formatters/verbose'
 

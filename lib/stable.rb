@@ -66,6 +66,7 @@ module Stable
         define_method(method_name) do |*args, **kwargs, &block|
           if Stable.enabled?
             begin
+              prior = Stable.send(:_capture_state, self)
               result = original_method.is_a?(UnboundMethod) ? original_method.bind(self).call(*args, **kwargs, &block) : original_method.call(*args, **kwargs, &block)
               fact = Fact.new(
                 class_name: klass.name,
@@ -73,6 +74,7 @@ module Stable
                 method_type: type,
                 args: args,
                 kwargs: kwargs,
+                prior: prior,
                 result: result
               )
               unless Stable.send(:_fact_exists?, fact.signature)
@@ -82,12 +84,14 @@ module Stable
               end
               result
             rescue => e
+              prior = Stable.send(:_capture_state, self)
               fact = Fact.new(
                 class_name: klass.name,
                 method_name: method_name,
                 method_type: type,
                 args: args,
                 kwargs: kwargs,
+                prior: prior,
                 error: {
                   class: e.class.name,
                   message: e.message,
@@ -139,6 +143,12 @@ module Stable
 
     def _fact_exists?(signature)
       _recorded_facts.any? { |fact| fact.signature == signature }
+    end
+
+    def _capture_state(obj)
+      obj.instance_variables.each_with_object({}) do |var, hash|
+        hash[var] = obj.instance_variable_get(var)
+      end
     end
   end
 end

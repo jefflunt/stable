@@ -52,3 +52,13 @@ This document provides instructions for AI agents operating in this repository.
     - create a new branch named after the task, and make sure to branch off of `main`
     - commit your changes as you go: that is, do an incremental commit with every subtask, even if the code isn't fully working yet
     - at the end of the task, test the code again to ensure it looks like it's working correctly
+
+## Building
+Always be methodical, planning each step carefully along the way.
+
+- When starting work on a new task, re-read the plan and add any missing steps
+- If you get caught trying to implement something that you can't seem to crack, and you seem to be stuck in a circle, it's best to:
+  - Take a break from the implementation
+  - Perform a root-cause analysis of the problem, and update the plan accordingly
+  - If you fail, you don't necessarily have to start over completely. First try to go back to just the previously-working step and tray again.
+  - If you fail after several tries, sometimes it's best to stop and ask for help

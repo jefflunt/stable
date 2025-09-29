@@ -66,7 +66,7 @@ module Stable
         define_method(method_name) do |*args, **kwargs, &block|
           if Stable.enabled?
             begin
-              prior = Stable.send(:_capture_state, self)
+              prior = type == :instance ? Stable.send(:_capture_state, self) : nil
               result = original_method.is_a?(UnboundMethod) ? original_method.bind(self).call(*args, **kwargs, &block) : original_method.call(*args, **kwargs, &block)
               fact = Fact.new(
                 class_name: klass.name,
@@ -84,7 +84,7 @@ module Stable
               end
               result
             rescue => e
-              prior = Stable.send(:_capture_state, self)
+              prior = type == :instance ? Stable.send(:_capture_state, self) : nil
               fact = Fact.new(
                 class_name: klass.name,
                 method_name: method_name,

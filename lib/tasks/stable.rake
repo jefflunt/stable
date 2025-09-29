@@ -24,7 +24,7 @@ namespace :stable do
     puts formatter.header
 
     _filter_facts(facts, args[:filter].to_s.strip.downcase).each do |fact|
-      fact.run!
+      fact.verify!
       puts formatter.to_s(fact)
     end
 
@@ -44,7 +44,7 @@ namespace :stable do
       puts formatter.header
 
       facts.each do |fact|
-        fact.run!
+        fact.verify!
         puts formatter.to_s(fact)
       end
 
@@ -97,7 +97,7 @@ namespace :stable do
 
       updated_facts = []
       _filter_facts(facts, _clean_filter(args[:filter])).each do |fact|
-        fact.run!
+        fact.verify!
         if fact.status == :failed
           puts formatter.to_s(fact)
           print "  update this fact? (y/n): "

@@ -126,7 +126,7 @@ module Stable
     end
 
     def verify(record_hash)
-      Fact.from_jsonl(record_hash.to_json).run!
+      Fact.from_jsonl(record_hash.to_json).verify!
     end
 
     private

@@ -32,7 +32,7 @@ module Stable
     end
 
 
-    def run!
+    def verify!
       begin
         klass = Object.const_get(class_name)
         if method_type == :instance
@@ -113,7 +113,5 @@ module Stable
         source_file: source_file
       )
     end
-
-
   end
 end

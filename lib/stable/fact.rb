@@ -8,9 +8,9 @@ module Stable
   # outputs. it's a self-contained, serializable representation of a method's
   # behavior at a specific point in time.
   class Fact
-    attr_reader :class_name, :method_name, :method_type, :args, :kwargs, :result, :error, :actual_result, :actual_error, :status, :uuid, :signature, :name, :source_file
+    attr_reader :class_name, :method_name, :method_type, :args, :kwargs, :result, :error, :actual_result, :actual_error, :status, :uuid, :signature, :name, :source_file, :prior
 
-    def initialize(class_name:, method_name:, args:, method_type: :instance, kwargs: {}, result: nil, error: nil, uuid: SecureRandom.uuid, name: nil, source_file: nil)
+    def initialize(class_name:, method_name:, args:, method_type: :instance, kwargs: {}, result: nil, error: nil, uuid: SecureRandom.uuid, name: nil, source_file: nil, prior: nil)
       @class_name = class_name
       @method_name = method_name
       @method_type = method_type
@@ -23,6 +23,7 @@ module Stable
       @signature = Digest::SHA256.hexdigest("#{class_name}##{method_name}:#{args.to_json}:#{kwargs.to_json}")
       @name = name || uuid.split('-').last
       @source_file = source_file
+      @prior = prior
     end
 
     def name=(new_name)
@@ -82,6 +83,7 @@ module Stable
         method_type: method_type,
         args: args,
         kwargs: kwargs,
+        prior: prior,
         result: result,
         error: error,
         uuid: uuid,
@@ -98,6 +100,7 @@ module Stable
         method_type: (data['method_type'] || :instance).to_sym,
         args: data['args'],
         kwargs: data['kwargs'],
+        prior: data['prior'],
         result: data['result'],
         error: data['error'],
         uuid: data['uuid'],

@@ -58,6 +58,34 @@ module Stable
       @storage = nil
     end
 
+    # This is the core method for observing a method on a class or module. It
+    # uses a dynamic module and `prepend` to intercept method calls without
+    # altering the original method.
+    #
+    # The design handles several complexities:
+    #
+    # 1.  **Instance vs. Class Methods:** It accepts a `type` parameter to
+    #     differentiate between instance and class methods. For class methods,
+    #     it targets the singleton class (`klass.singleton_class`) to inject
+    #     the wrapper.
+    #
+    # 2.  **State Capture:** For instance methods, it captures the object's state
+    #     (instance variables) *before* the method is called. This `prior` state
+    #     is crucial for rehydrating the object during verification. State is not
+    #     captured for class methods to prevent infinite loops, as the recording
+    #     process itself may call class methods (e.g., `.name`).
+    #
+    # 3.  **Method Binding:** It correctly handles both bound (`Method`) and
+    #     unbound (`UnboundMethod`) method objects, ensuring `self` is correctly
+    #     bound when the original method is eventually called.
+    #
+    # 4.  **Fact Creation:** It gathers all relevant data—class name, method name,
+    #     arguments, prior state, and the result or error—into a `Fact` object.
+    #
+    # 5.  **Duplicate Prevention:** It generates a signature for each potential
+    #     fact and checks if a fact with the same signature has already been
+    #     recorded to prevent creating duplicate entries.
+    #
     def watch(klass, method_name, type: :instance)
       original_method = type == :instance ? klass.instance_method(method_name) : klass.method(method_name)
       target = type == :instance ? klass : klass.singleton_class

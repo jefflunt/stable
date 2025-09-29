@@ -8,6 +8,7 @@ namespace :stable do
     require_relative '../../lib/example/calculator'
     require_relative '../../lib/example/kw_calculator'
     require_relative '../../lib/example/class_methods'
+    require_relative '../../lib/example/stateful_calculator'
 
     fact_path = File.expand_path('../../../facts/calculator.fact.example', __FILE__)
     Stable.configure do |config|

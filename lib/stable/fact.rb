@@ -37,6 +37,11 @@ module Stable
         klass = Object.const_get(class_name)
         if method_type == :instance
           instance = klass.new
+          if prior
+            prior.each do |var, value|
+              instance.instance_variable_set(var, value)
+            end
+          end
           @actual_result = instance.public_send(method_name, *args, **kwargs)
         else
           @actual_result = klass.public_send(method_name, *args, **kwargs)

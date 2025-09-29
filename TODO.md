@@ -1,5 +1,5 @@
 T034: fix infinite loop when watching class methods
-- update `watch` method to only capture `prior` state for instance methods
+| update `watch` method to only capture `prior` state for instance methods
 - add temporary recording block to rake task to verify the fix
 - run rake task to confirm stack overflow is resolved
 - remove temporary recording block from rake task
